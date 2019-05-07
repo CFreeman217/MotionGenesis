@@ -104,6 +104,7 @@ venv.bak/
 .mypy_cache/
 
 # Executables
+.exe
 MotionGenesis.exe
 MotionGenesisStartHere.lnk
 MotionGenesisStartHereBigFont.lnk
@@ -118,6 +119,7 @@ MGLicense.txt
 
 # Motion Genesis links
 .lnk
+.Ink
 
 # Other Install stuff
 MGToolbox/
