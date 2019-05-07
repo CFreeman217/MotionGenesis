@@ -120,6 +120,7 @@ MGLicense.txt
 # Motion Genesis links
 .lnk
 .Ink
+.ink
 .1nk
 
 # Other Install stuff
@@ -132,3 +133,11 @@ MGToolbox/
 ./_mgTmp.06
 ./_mgTmp.07
 ./_mgTmp.08
+_mgTmp.01
+_mgTmp.02
+_mgTmp.03
+_mgTmp.04
+_mgTmp.05
+_mgTmp.06
+_mgTmp.07
+_mgTmp.08
