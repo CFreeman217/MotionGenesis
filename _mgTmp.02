@@ -1,0 +1,47 @@
+   (1) % ME 493 Intermediate Dynamics
+   (2) % HW 4
+   (3) % Problem 1.10 Kane
+   (4) NewtonianFrame L % Laboratory, centered at center of disk, point Lo
+   (5) RigidFrame C % Stuck to the edge of the disk
+   (6) RigidBody D, R % Disk
+   (7) Particle P
+   (8) Constant n
+   (9) Variable Q1', Q2', U1', U2' % Disk rotation, Rod angle from vertical
+   (10) Q1' = U1
+-> (11) Q1' = U1
+
+   (12) Q2' = U2
+-> (13) Q2' = U2
+
+   (14) % Rotations
+   (15) C.RotateNegativeX(L, Q1)
+-> (16) C_L = [1, 0, 0;  0, cos(Q1), -sin(Q1);  0, sin(Q1), cos(Q1)]
+-> (17) w_C_L> = -Q1'*Cx>
+-> (18) alf_C_L> = -U1'*Cx>
+
+   (19) R.RotateY(C, Q2)
+-> (20) R_C = [cos(Q2), 0, -sin(Q2);  0, 1, 0;  sin(Q2), 0, cos(Q2)]
+-> (21) w_R_C> = Q2'*Ry>
+-> (22) w_R_L> = -Q1'*Cx> + Q2'*Ry>
+-> (23) alf_R_C> = U2'*Ry>
+-> (24) alf_R_L> = -U1'*Cx> - Q1'*Q2'*Cz> + U2'*Ry>
+
+   (25) % Positions
+   (26) r_C_L> = n*Cy>
+-> (27) r_C_L> = n*Cy>
+
+   (28) r_P_C> = -3*n*Rx>
+-> (29) r_P_C> = -3*n*Rx>
+
+   (30) r_P_L> = r_C_L> + r_P_C>
+-> (31) r_P_L> = n*Cy> - 3*n*Rx>
+
+   (32) % Convert Position of P in L in terms of C
+   (33) Express(r_P_L>, C)
+-> (34) r_P_L> = -3*n*cos(Q2)*Cx> + n*Cy> + 3*n*sin(Q2)*Cz>
+
+   (35) % Time Derivative with respect to L
+   (36) VPL> = DT(r_P_L>, L)
+-> (37) VPL> = 3*n*sin(Q2)*Q2'*Cx> + 3*n*sin(Q2)*Q1'*Cy> - n*(Q1'-3*cos(Q2)*Q2')*Cz>
+
+   (38) save Kane_HW4_1_10.html

@@ -1,0 +1,47 @@
+<HTML><HEAD><TITLE>MotionGenesis: Mitiguy_HW4_6_21.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>Mitiguy_HW4_6_21.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME 493 Intermediate Dynamics
+   (2) % HW 4
+   (3) % Problem 6.21
+   (4) % Objects
+   (5) NewtonianFrame N
+   (6) RigidFrame B, A 
+   (7) RigidBody C 
+   (8) % Variables
+   (9) Variable theta'', phi'', wC'
+   (10) % Rotations
+   (11) A.RotateNegativeZ(N, theta)
+-> (12) A_N = [cos(theta), -sin(theta), 0;  sin(theta), cos(theta), 0;  0, 0, 1]
+-> (13) w_A_N> = -theta'*Az>
+-> (14) alf_A_N> = -theta''*Az>
+
+   (15) B.RotateNegativeX(A, phi)
+-> (16) B_A = [1, 0, 0;  0, cos(phi), -sin(phi);  0, sin(phi), cos(phi)]
+-> (17) w_B_A> = -phi'*Bx>
+-> (18) w_B_N> = -theta'*Az> - phi'*Bx>
+-> (19) alf_B_A> = -phi''*Bx>
+-> (20) alf_B_N> = phi'*theta'*Ay> - theta''*Az> - phi''*Bx>
+
+   (21) % Angular Velocities
+   (22) C.SetAngularVelocityAcceleration(B, wC*Bz>)
+-> (23) w_C_B> = wC*Bz>
+-> (24) w_C_N> = -theta'*Az> - phi'*Bx> + wC*Bz>
+-> (25) alf_C_B> = wC'*Bz>
+-> (26) alf_C_N> = phi'*theta'*Ay> - theta''*Az> + (wC*sin(phi)*theta'-phi'')*Bx>
+        + wC*phi'*By> + wC'*Bz>
+
+   (27) % Expressions
+   (28) Express(w_B_N>, B)
+-> (29) w_B_N> = -phi'*Bx> + sin(phi)*theta'*By> - cos(phi)*theta'*Bz>
+
+   (30) Express(w_C_N>, B)
+-> (31) w_C_N> = -phi'*Bx> + sin(phi)*theta'*By> + (wC-cos(phi)*theta')*Bz>
+
+   (32) Express(alf_B_N>, B)
+-> (33) alf_B_N> = -phi''*Bx> + (cos(phi)*phi'*theta'+sin(phi)*theta'')*By>
+        + (sin(phi)*phi'*theta'-cos(phi)*theta'')*Bz>
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>

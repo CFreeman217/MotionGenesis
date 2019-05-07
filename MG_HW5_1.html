@@ -1,0 +1,69 @@
+<HTML><HEAD><TITLE>MotionGenesis: MG_HW5_1.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>MG_HW5_1.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME493 : Intermediate Dynamics
+   (2) % HW 5
+   (3) % Problem 1
+   (4) % Objects
+   (5) NewtonianFrame E
+   (6) RigidFrame A, B 
+   (7) RigidBody C 
+   (8) % Variables
+   (9) Variable Q1', Q2', Q3', U1', U2', U3'
+   (10) SetGeneralizedSpeed(U1, U2, U3)
+   (11) % Rotations
+   (12) A.RotatePositiveX(E, Q1)
+-> (13) A_E = [1, 0, 0;  0, cos(Q1), sin(Q1);  0, -sin(Q1), cos(Q1)]
+-> (14) w_A_E> = Q1'*Ax>
+
+   (15) B.RotateNegativeY(A, Q2)
+-> (16) B_A = [cos(Q2), 0, sin(Q2);  0, 1, 0;  -sin(Q2), 0, cos(Q2)]
+-> (17) w_B_A> = -Q2'*By>
+-> (18) w_B_E> = Q1'*Ax> - Q2'*By>
+
+   (19) C.RotatePositiveX(B, Q3)
+-> (20) C_B = [1, 0, 0;  0, cos(Q3), sin(Q3);  0, -sin(Q3), cos(Q3)]
+-> (21) w_C_B> = Q3'*Cx>
+-> (22) w_C_E> = Q1'*Ax> - Q2'*By> + Q3'*Cx>
+
+   (23) % Part A
+   (24) Echo(w_C_E>)
+   (25) % Part B
+   (26) Express(w_C_E>, E)
+-> (27) w_C_E> = (Q1'+cos(Q2)*Q3')*Ex> + (-cos(Q1)*Q2'-sin(Q1)*sin(Q2)*Q3')*Ey>
+        + (sin(Q2)*cos(Q1)*Q3'-sin(Q1)*Q2')*Ez>
+
+   (28) % Part C
+   (29) Express(w_C_E>, C)
+-> (30) w_C_E> = (Q3'+cos(Q2)*Q1')*Cx> + (-sin(Q2)*sin(Q3)*(Q1'+cos(Q2)*Q3')-(
+        sin(Q1)*cos(Q3)+sin(Q3)*cos(Q1)*cos(Q2))*(sin(Q1)*Q2'-sin(Q2)*cos(Q1)*
+        Q3')-(cos(Q1)*cos(Q3)-sin(Q1)*sin(Q3)*cos(Q2))*(cos(Q1)*Q2'+sin(Q1)*sin
+        (Q2)*Q3'))*Cy> + ((sin(Q3)*cos(Q1)+sin(Q1)*cos(Q2)*cos(Q3))*(cos(Q1)*
+        Q2'+sin(Q1)*sin(Q2)*Q3')+(sin(Q1)*sin(Q3)-cos(Q1)*cos(Q2)*cos(Q3))*(sin
+        (Q1)*Q2'-sin(Q2)*cos(Q1)*Q3')-sin(Q2)*cos(Q3)*(Q1'+cos(Q2)*Q3'))*Cz>
+
+   (31) % Part D
+   (32) wCE> = U1*Cx> + U2*Cy> + U3*Cz>
+-> (33) wCE> = U1*Cx> + U2*Cy> + U3*Cz>
+
+   (34) Zero[1] = dot(wCE> - w_C_E>, Cx>)
+-> (35) Zero[1] = U1 - Q3' - cos(Q2)*Q1'
+
+   (36) Zero[2] = dot(wCE> - w_C_E>, Cy>)
+-> (37) Zero[2] = U2 + sin(Q2)*sin(Q3)*(Q1'+cos(Q2)*Q3') + (sin(Q1)*cos(Q3)+sin
+        (Q3)*cos(Q1)*cos(Q2))*(sin(Q1)*Q2'-sin(Q2)*cos(Q1)*Q3') + (cos(Q1)*cos(
+        Q3)-sin(Q1)*sin(Q3)*cos(Q2))*(cos(Q1)*Q2'+sin(Q1)*sin(Q2)*Q3')
+
+   (38) Zero[3] = dot(wCE> - w_C_E>, Cz>)
+-> (39) Zero[3] = U3 + sin(Q2)*cos(Q3)*(Q1'+cos(Q2)*Q3') - (sin(Q3)*cos(Q1)+sin
+        (Q1)*cos(Q2)*cos(Q3))*(cos(Q1)*Q2'+sin(Q1)*sin(Q2)*Q3') - (sin(Q1)*sin(
+        Q3)-cos(Q1)*cos(Q2)*cos(Q3))*(sin(Q1)*Q2'-sin(Q2)*cos(Q1)*Q3')
+
+   (40) solve(Zero, Q1', Q2', Q3')
+-> (41) Q1' = -(sin(Q3)*U2+cos(Q3)*U3)/sin(Q2)
+-> (42) Q2' = sin(Q3)*U3 - cos(Q3)*U2
+-> (43) Q3' = U1 + cos(Q2)*(sin(Q3)*U2+cos(Q3)*U3)/sin(Q2)
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>

@@ -1,0 +1,25 @@
+% ME 493 Intermediate Dynamics
+% HW 4
+% Problem 6.21
+
+% Objects
+NewtonianFrame N
+RigidFrame B, A 
+RigidBody C 
+
+% Variables
+Variable theta'', phi'', wC'
+
+% Rotations
+A.RotateNegativeZ(N, theta)
+B.RotateNegativeX(A, phi)
+
+% Angular Velocities
+C.SetAngularVelocityAcceleration(B, wC*Bz>)
+
+% Expressions
+Express(w_B_N>, B)
+Express(w_C_N>, B)
+Express(alf_B_N>, B)
+
+save Mitiguy_HW4_6_21.html

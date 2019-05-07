@@ -1,0 +1,54 @@
+% ME 493: Intermediate Dynamics
+% Final Exam Problem 1
+
+NewtonianFrame N 
+RigidBody D, A 
+Constant L, rD, g, k
+Point R(A), P(A), Q()
+Variable Q1', Q2', U1', U2'
+SetGeneralizedSpeed(U1, U2)
+
+D.SetMass(Md)
+D.SetInertia(Dcm, Md*rD^2/4*(Dx>*Dx> + Dy>*Dy> + 2*Dz>*Dz>))
+A.SetMass(Ma)
+A.SetInertia(Acm, IAx, IAy, IAz)
+
+rD = 0.7*L
+g = 9.81
+
+%%% Kinematical Equations %%%
+Q1' = U1
+Q2' = U2
+
+%%% Rotations %%%
+D.RotateX(N, -Q1)
+A.RotateY(D, Q2)
+
+%%% Translations %%%
+% R.SetPosition(Dcm, rD*Dy>)
+Ao.SetPosition(Dcm, -rD*Dy>)
+Acm.SetPosition(Dcm, 0.5*L*Ax>)
+P.SetPosition(Ao, L*Ax>)
+Q.SetPosition(Dcm, 3*L*Dx>)
+
+%%% Velocities %%%
+Acm.SetVelocityAcceleration(N, 0.7*U1*Ax> + U1*Ay> + U2*Az>)
+Dcm.SetVelocityAcceleration(N, 0>)
+
+%%% Partial Velocities %%%
+VD_Partials =  Dcm.GetPartialVelocity(N)
+VDcm_Partial1> = VD_Partials[1]
+VDcm_Partial2> = VD_Partials[2]
+VA_Partials = Acm.GetPartialVelocity(N)
+VAcm_Partial1> = VA_Partials[1]
+VAcm_Partial2> = VA_Partials[2]
+WD_Partial1> = D.GetPartialAngularVelocity(N, U1)
+WD_Partial2> = D.GetPartialAngularVelocity(N, U2)
+WA_Partial1> = A.GetPartialAngularVelocity(N, U1)
+WA_Partial2> = A.GetPartialAngularVelocity(N, U2)
+
+%%% Forces %%%
+System.AddForceGravity( g*Nx> )
+P.AddForceSpring(Q, k, L)
+
+%%% Effective Moments %%%

@@ -1,0 +1,72 @@
+% ME 493: Intermediate Dynamics
+% Example 7
+
+% Two linked bars of length 2L hang from a ceiling with spring at end of second bar anchoring to wall.
+% Point P is Anchor in ceiling for Bar A at angle Q1 at distance L to the right from origin of Newtonian Frame
+% Point R is hanging end of Bar A attached to Bar B
+% Q2 is angle between line of Bar A and Bar B
+% Point S is attached to end of Bar B and is anchored the wall through a spring of constant K to point Q
+% Point Q is located 4L below origin of Newtonian Frame
+
+NewtonianFrame N 
+RigidBody A, B 
+A.SetMass(Ma)
+A.SetInertia(Acm, Ix, Iy, Iz)
+B.SetMass(Mb)
+B.SetInertia(Bcm, Ix, Iy, Iz) % A and B are same shape bar
+Point P(), R(), S(B), Q()
+Variable Q1', Q2', U1', U2'
+SetGeneralizedSpeed(U1, U2)
+Constant L, K, g
+
+%%% Kinematical Equations %%%
+Q1' = U1
+Q2' = U2
+
+%%% Rotations %%%
+A.Rotate(N, BodyZ, Q1)
+B.Rotate(N, BodyZ, Q2)
+
+%%% Translations %%%
+V_P_N> = 0>
+A_P_N> = 0>
+Acm.Translate(P, -L*Ay>)
+R.Translate(P, -2*L*Ay>)
+Bcm.Translate(R, -L*By>)
+S.Translate(R, -2*L*By>)
+Q.Translate(P, -L*Nx> -4*L*Ny>)
+
+%%% Partial Velocities %%%
+VA_Partials = Acm.GetPartialVelocity(N)
+VAcm_Partial1> = VA_Partials[1]
+VAcm_Partial2> = VA_Partials[2]
+VB_Partials = Bcm.GetPartialVelocity(N)
+VBcm_Partial1> = VB_Partials[1]
+VBcm_Partial2> = VB_Partials[2]
+WA_Partial1> = A.GetPartialAngularVelocity(N, U1)
+WA_Partial2> = A.GetPartialAngularVelocity(N, U2)
+WB_Partial1> = B.GetPartialAngularVelocity(N, U1)
+WB_Partial2> = B.GetPartialAngularVelocity(N, U2)
+
+%%% Forces %%%
+System.AddForceGravity( -g*Ny> )
+S.AddForceSpring(Q, K, L)
+
+%%% Effective Moments %%%
+NMA_Acm> = dot(I_A_Acm>>, alf_A_N>) + cross(W_A_N>, dot(I_A_Acm>>, W_A_N>))
+NMB_Bcm> = dot(I_B_Bcm>>, alf_B_N>) + cross(W_B_N>, dot(I_B_Bcm>>, W_B_N>))
+
+%%% Kane's Equations %%%
+F1 = dot(A.GetResultantForce(), VAcm_Partial1>) + dot(B.GetResultantForce(), VBcm_Partial1>) + dot(A.GetResultantMoment(Acm), WA_Partial1>) + dot(B.GetResultantMoment(Bcm), WB_Partial1>)
+F1_N = dot(Ma*A_Acm_N>, VAcm_Partial1>) + dot(Mb*A_Bcm_N>, VBcm_Partial1>) + dot(NMA_Acm>, WA_Partial1>) + dot(NMB_Bcm>, WB_Partial1>)
+F2 = dot(A.GetResultantForce(), VAcm_Partial2>) + dot(B.GetResultantForce(), VBcm_Partial2>) + dot(A.GetResultantMoment(Acm), WA_Partial2>) + dot(B.GetResultantMoment(Bcm), WB_Partial2>)
+F2_N = dot(Ma*A_Acm_N>, VAcm_Partial2>) + dot(Mb*A_Bcm_N>, VBcm_Partial2>) + dot(NMA_Acm>, WA_Partial2>) + dot(NMB_Bcm>, WB_Partial2>)
+
+zero[1] = explicit(F1 - F1_N)
+zero[2] = explicit(F2 - F2_N)
+
+zero_auto = System.GetDynamicsKane()
+
+check = explicit(zero + zero_auto)
+
+ODE(zero, U1', U2') KaneEx7.m

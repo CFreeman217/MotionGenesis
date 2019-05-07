@@ -1,0 +1,37 @@
+NewtonianFrame N
+RigidFrame A, B 
+Particle Q
+Point cP
+Constant m, g
+Variable theta'', v1'', L1''
+SetGeneralizedSpeed(theta', v1', L1')
+Q.SetMass(m)
+A.RotateZ(N, 0)
+B.RotateZ(A, theta)
+
+Q.SetPosition(Ao, -L1*By>)
+cP.SetPosition(Ao, -L1*By>)
+
+Ao.SetPosition(No, v1*Ax>)
+
+v_Ao_N> = v1'*Ax>
+Q.SetVelocity(B, -L1'*By>)
+Bo.SetVelocity(A, w_B_A>)
+Ao.SetVelocity(N, v1'*Nx>)
+% v_Q_B> = -L1'*By>
+% v_Q_A> = DT(p_Q_Ao>, A)
+
+% Q.SetVelocity(N, Ao, B)
+
+a_Ao_N> = 0>
+aQN> = DT(v_Q_N>, N)
+% Q.SetVelocity(N, Ao, B, cP)
+
+% r_Bo_A> = -L1*By>
+% r_Q_Ao> = -L1*By>
+% % v_Bo_A> = -L1'*By>
+% v_Ao_N> = v1'*Nx>
+% v_Q_A> = v_Ao_N> + cross(w_B_A>, r_Bo_A>) + v_Bo_A>
+% % Q.SetVelocity(A, Bo)
+
+% vQN_Part1> = Q.GetPartialVelocity(N, theta')

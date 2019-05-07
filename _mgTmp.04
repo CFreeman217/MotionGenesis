@@ -1,0 +1,51 @@
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Pendulum with sliding mass and mobile base
+   (3) NewtonianFrame N 
+   (4) RigidBody A 
+   (5) Particle P, Q
+   (6) Variable Q1', Q2', Q3', U1', U2', U3'
+   (7) Q1' = U1
+-> (8) Q1' = U1
+
+   (9) Q2' = U2
+-> (10) Q2' = U2
+
+   (11) Q3' = U3
+-> (12) Q3' = U3
+
+   (13) A.RotateZ(N, Q1)
+-> (14) A_N = [cos(Q1), sin(Q1), 0;  -sin(Q1), cos(Q1), 0;  0, 0, 1]
+-> (15) w_A_N> = Q1'*Az>
+-> (16) alf_A_N> = U1'*Az>
+
+   (17) P.SetPosition(Q, -Q2*Ay>)
+-> (18) p_Q_P> = -Q2*Ay>
+
+   (19) V_Q_N> = U3*Nx>
+-> (20) V_Q_N> = U3*Nx>
+
+   (21) V_P_A> = -U2*Ay>
+-> (22) V_P_A> = -U2*Ay>
+
+   (23) V_P_N> = V_Q_N> + cross(w_A_N>, p_Q_P>) + V_P_A>
+-> (24) V_P_N> = Q2*Q1'*Ax> - U2*Ay> + U3*Nx>
+
+   (25) A_O_N> = U3'*Nx>
+-> (26) A_O_N> = U3'*Nx>
+
+   (27) A_Q_N> = U3'*Nx>
+-> (28) A_Q_N> = U3'*Nx>
+
+   (29) A_P_A> = -U2'*Ay>
+-> (30) A_P_A> = -U2'*Ay>
+
+   (31) APN> = DT(V_P_N>, N)
+-> (32) APN> = (Q2*U1'+U2*Q1'+Q1'*Q2')*Ax> + (Q2*Q1'^2-U2')*Ay> + U3'*Nx>
+
+   (33) APA> = DT(V_P_N>, A)
+-> (34) APA> = (Q2*U1'+Q1'*Q2')*Ax> - U2'*Ay> + U3'*Nx> - U3*Q1'*Ny>
+
+   (35) NWARPQ> = cross(w_A_N>, p_Q_P>)
+-> (36) NWARPQ> = Q2*Q1'*Ax>
+
+   (37) cross(2*w_A_N>, V_P_A>)

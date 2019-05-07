@@ -1,0 +1,38 @@
+% ME 493 Intermediate Dynamics
+% HW 4
+% Problem 6.22
+
+% Objects
+NewtonianFrame A 
+RigidFrame B, C 
+RigidBody D
+
+% Variables
+Variable QH', QL', QS', wx', wy', wz'
+SetGeneralizedSpeed( wx, wy, wz )
+
+% Rotataions
+B.RotateZ(A, QH)
+C.RotateNegativeX(B, QL)
+D.RotateY(C, QS)
+
+% D's Angular Velocity in A, expressed in terms of C
+Express(w_D_A>, C)
+
+% Form Kinematical Differential Equations
+wDA> = wx*Cx> + wy*Cy> + wz*Cz>
+% Each of these equations should equal zero
+% Dotting out the x, y, z in the C basis gets rid of it in both equations
+Zero[1] = Dot(wDA> - w_D_A>, Cx>)
+Zero[2] = Dot(wDA> - w_D_A>, Cy>)
+Zero[3] = Dot(wDA> - w_D_A>, Cz>)
+% Solves the system in terms of the QL, QS, and QH terms
+Solve(Zero, QL', QS', QH')
+
+% D's Angular Acceleration in A
+aDA> = DT(wDA>, D)
+
+% C's Angular Velocity in A
+Express(w_C_A>, C)
+
+save Mitiguy_HW4_6_22.html

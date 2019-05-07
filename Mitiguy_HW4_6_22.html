@@ -1,0 +1,64 @@
+<HTML><HEAD><TITLE>MotionGenesis: Mitiguy_HW4_6_22.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>Mitiguy_HW4_6_22.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME 493 Intermediate Dynamics
+   (2) % HW 4
+   (3) % Problem 6.22
+   (4) % Objects
+   (5) NewtonianFrame A 
+   (6) RigidFrame B, C 
+   (7) RigidBody D
+   (8) % Variables
+   (9) Variable QH', QL', QS', wx', wy', wz'
+   (10) SetGeneralizedSpeed( wx, wy, wz )
+   (11) % Rotataions
+   (12) B.RotateZ(A, QH)
+-> (13) B_A = [cos(QH), sin(QH), 0;  -sin(QH), cos(QH), 0;  0, 0, 1]
+-> (14) w_B_A> = QH'*Bz>
+
+   (15) C.RotateNegativeX(B, QL)
+-> (16) C_B = [1, 0, 0;  0, cos(QL), -sin(QL);  0, sin(QL), cos(QL)]
+-> (17) w_C_B> = -QL'*Cx>
+-> (18) w_C_A> = QH'*Bz> - QL'*Cx>
+
+   (19) D.RotateY(C, QS)
+-> (20) D_C = [cos(QS), 0, -sin(QS);  0, 1, 0;  sin(QS), 0, cos(QS)]
+-> (21) w_D_C> = QS'*Dy>
+-> (22) w_D_A> = QH'*Bz> - QL'*Cx> + QS'*Dy>
+
+   (23) % D's Angular Velocity in A, expressed in terms of C
+   (24) Express(w_D_A>, C)
+-> (25) w_D_A> = -QL'*Cx> + (QS'-sin(QL)*QH')*Cy> + cos(QL)*QH'*Cz>
+
+   (26) % Form Kinematical Differential Equations
+   (27) wDA> = wx*Cx> + wy*Cy> + wz*Cz>
+-> (28) wDA> = wx*Cx> + wy*Cy> + wz*Cz>
+
+   (29) % Each of these equations should equal zero
+   (30) % Dotting out the x, y, z in the C basis gets rid of it in both equations
+   (31) Zero[1] = Dot(wDA> - w_D_A>, Cx>)
+-> (32) Zero[1] = wx + QL'
+
+   (33) Zero[2] = Dot(wDA> - w_D_A>, Cy>)
+-> (34) Zero[2] = wy + sin(QL)*QH' - QS'
+
+   (35) Zero[3] = Dot(wDA> - w_D_A>, Cz>)
+-> (36) Zero[3] = wz - cos(QL)*QH'
+
+   (37) % Solves the system in terms of the QL, QS, and QH terms
+   (38) Solve(Zero, QL', QS', QH')
+-> (39) QL' = -wx
+-> (40) QS' = wy + tan(QL)*wz
+-> (41) QH' = wz/cos(QL)
+
+   (42) % D's Angular Acceleration in A
+   (43) aDA> = DT(wDA>, D)
+-> (44) aDA> = (wx'-wz*QS')*Cx> + wy'*Cy> + (wx*QS'+wz')*Cz>
+
+   (45) % C's Angular Velocity in A
+   (46) Express(w_C_A>, C)
+-> (47) w_C_A> = wx*Cx> - tan(QL)*wz*Cy> + wz*Cz>
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>

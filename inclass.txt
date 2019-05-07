@@ -1,0 +1,53 @@
+% ME401 Kane's Equations Example 1
+
+NewtonianFrame N
+Constant L, m, g
+Variable q1', u1', Ts % Ts is tension in string
+SetGeneralizedSpeed(u1)
+RigidFrame B
+Particle P
+P.SetMass(m)
+
+%%% Kinematic Equations %%%
+q1' = u1 % Use this to avoid double dotting stuff
+
+%%% Rotations %%%%
+B.Rotate(N, BodyZ, q1)
+% B.RotateZ(N, q1)
+
+%%% Positions %%%
+P_P_Bo> = L*Bx>
+% r_P_N> = L*Bx>
+
+%%% Velocities %%%
+v_Bo_N> = 0>
+% v_No_N> = 0>
+P.SetVelocity(N, Bo)
+
+%%% Partial Velocities %%%
+VPN_Partial1> = P.GetPartialVelocity(N, U1)
+% VPN_Partial1> = D(v_P_N>, u1)
+
+%%% Accelerations %%%
+% A_Bo_N> = 0>
+% a_No_N> = 0>
+
+%%% V2PTS %%%
+% v_P_N> = v_No_N> + Cross(w_B_N>, r_P_N>)
+
+
+%%% A2PTS %%%
+a_Bo_N> = 0>
+P.SetAcceleration(N, Bo)
+% a_P_N> = a_No_N> + Cross(w_B_N>, Cross(w_B_N>, r_P_N>)) + Cross(alf_B_N>, r_P_N>)
+
+%%% Forces %%%
+P.AddForce(-Ts*Bx>)
+System.AddForceGravity(g*Nx>)
+
+%%% Kane's Equations %%%
+F1P = dot(P.GetResultantForce(), VPN_Partial1>)
+F1NP = m*dot(a_P_N>, VPN_Partial1>)
+EOM = F1P - F1NP
+
+Explicit(EOM)

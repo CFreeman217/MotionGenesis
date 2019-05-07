@@ -102,3 +102,30 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Executables
+MotionGenesis.exe
+MotionGenesisStartHere.lnk
+MotionGenesisStartHereBigFont.lnk
+MotionGenesisStartHereSmallFont.lnk
+MotionGenesisTerminal.lnk
+MotionGenesisTerminalBigFont.lnk
+MotionGenesisTerminalSmallFont.lnk
+PlotGenesis.lnk
+
+# Motion Genesis License
+MGLicense.txt
+
+# Motion Genesis links
+*.lnk
+
+# Other Install stuff
+MGToolbox/
+_mgTmp.01
+_mgTmp.02
+_mgTmp.03
+_mgTmp.04
+_mgTmp.05
+_mgTmp.06
+_mgTmp.07
+_mgTmp.08

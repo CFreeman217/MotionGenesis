@@ -1,0 +1,18 @@
+% ME 493: Intermediate Dynamics
+% Pendulum with sliding mass and mobile base
+NewtonianFrame N 
+RigidBody A 
+Particle P, Q
+
+Variable Q1', Q2', Q3', U1', U2', U3'
+Q1' = U1
+Q2' = U2
+Q3' = U3
+
+A.RotateZ(N, Q1)
+P.SetPosition(Q, -Q2*Ay>)
+
+V_Q_N> = U3*Nx>
+V_P_A> = -U2*Ay>
+
+

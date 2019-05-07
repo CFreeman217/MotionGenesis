@@ -1,0 +1,36 @@
+% ME493 : Intermediate Dynamics
+% HW 5
+% Problem 1
+
+% Objects
+NewtonianFrame E
+RigidFrame A, B 
+RigidBody C 
+
+% Variables
+Variable Q1', Q2', Q3', U1', U2', U3'
+SetGeneralizedSpeed(U1, U2, U3)
+
+% Rotations
+A.RotatePositiveX(E, Q1)
+B.RotateNegativeY(A, Q2)
+C.RotatePositiveX(B, Q3)
+
+% Part A
+Echo(w_C_E>)
+
+% Part B
+Express(w_C_E>, E)
+
+% Part C
+Express(w_C_E>, C)
+
+% Part D
+wCE> = U1*Cx> + U2*Cy> + U3*Cz>
+Zero[1] = dot(wCE> - w_C_E>, Cx>)
+Zero[2] = dot(wCE> - w_C_E>, Cy>)
+Zero[3] = dot(wCE> - w_C_E>, Cz>)
+
+solve(Zero, Q1', Q2', Q3')
+
+save MG_HW5_1.html
