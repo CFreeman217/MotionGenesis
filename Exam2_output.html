@@ -1,0 +1,118 @@
+<HTML><HEAD><TITLE>MotionGenesis: Exam2_output.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>Exam2_output.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Final Exam Problem 2
+   (3) NewtonianFrame N 
+   (4) RigidBody A, B, C
+   (5) Point P(), Q()
+   (6) Constant L, rB, g, tB
+   (7) Variable Q{1:3}', U{1:3}'
+   (8) A.SetMass(Ma)
+   (9) A.SetInertia(Acm, 0, IA, IA)
+   (10) B.SetMass(Mb)
+   (11) B.SetInertia(Bcm, Mb*rB^2/4*(Bx>*Bx> + By>*By> + 2*Bz>*Bz>))
+   (12) C.SetMass(Mc)
+   (13) C.SetInertia(Ccm, IC, IC, 0)
+   (14) SetGeneralizedSpeed(U1, U2, U3)
+   (15) %%% Kinematical Equations %%%
+   (16) Q1' = U1
+-> (17) Q1' = U1
+
+   (18) Q2' = U2
+-> (19) Q2' = U2
+
+   (20) Q3' = U3
+-> (21) Q3' = U3
+
+   (22) %%% Rotations %%%
+   (23) A.RotateZ(N, tB+Q3)
+-> (24) A_N = [cos(tB+Q3), sin(tB+Q3), 0;  -sin(tB+Q3), cos(tB+Q3), 0;  0, 0, 1]
+-> (25) w_A_N> = U3*Az>
+-> (26) alf_A_N> = U3'*Az>
+
+   (27) B.RotateZ(N, tB)
+-> (28) B_N = [cos(tB), sin(tB), 0;  -sin(tB), cos(tB), 0;  0, 0, 1]
+-> (29) w_B_N> = 0>
+-> (30) alf_B_N> = 0>
+
+   (31) C.Rotate(A, BodyY, -Q1)
+-> (32) C_A = [cos(Q1), 0, sin(Q1);  0, 1, 0;  -sin(Q1), 0, cos(Q1)]
+-> (33) w_C_A> = -U1*Cy>
+-> (34) w_C_N> = sin(Q1)*U3*Cx> - U1*Cy> + cos(Q1)*U3*Cz>
+-> (35) alf_C_A> = -U1'*Cy>
+-> (36) alf_C_N> = (cos(Q1)*U1*U3+sin(Q1)*U3')*Cx> - U1'*Cy> + (cos(Q1)*U3'-sin
+        (Q1)*U1*U3)*Cz>
+
+   (37) %%% Translations %%%
+   (38) Bcm.Translate(No, Q2*By>)
+-> (39) p_No_Bcm> = Q2*By>
+-> (40) v_Bcm_N> = U2*By>
+-> (41) a_Bcm_N> = U2'*By>
+
+   (42) P.Translate(Bcm, rB*Bx>)
+-> (43) p_Bcm_P> = rB*Bx>
+-> (44) v_P_N> = U2*By>
+-> (45) a_P_N> = U2'*By>
+
+   (46) Ao.Translate(Bcm, 0>)
+-> (47) p_Bcm_Ao> = 0>
+-> (48) v_Ao_N> = U2*By>
+-> (49) a_Ao_N> = U2'*By>
+
+   (50) Acm.Translate(Bcm, L*Ax>)
+-> (51) p_Bcm_Acm> = L*Ax>
+-> (52) v_Acm_N> = L*U3*Ay> + U2*By>
+-> (53) a_Acm_N> = -L*U3^2*Ax> + L*U3'*Ay> + U2'*By>
+
+   (54) Q.Translate(Bcm, 2*L*Ax>)
+-> (55) p_Bcm_Q> = 2*L*Ax>
+-> (56) v_Q_N> = 2*L*U3*Ay> + U2*By>
+-> (57) a_Q_N> = -2*L*U3^2*Ax> + 2*L*U3'*Ay> + U2'*By>
+
+   (58) Co.Translate(Q, -1.5*Cz>)
+-> (59) p_Q_Co> = -1.5*Cz>
+-> (60) v_Co_N> = 1.5*(1.333333*L+sin(Q1))*U3*Ay> + U2*By> + 1.5*U1*Cx>
+-> (61) a_Co_N> = -2*L*U3^2*Ax> + (3*cos(Q1)*U1*U3+2*L*U3'+1.5*sin(Q1)*U3')*Ay>
+        + U2'*By> + (1.5*U1'-1.5*sin(Q1)*cos(Q1)*U3^2)*Cx> + (1.5*U1^2+1.5*sin(
+        Q1)^2*U3^2)*Cz>
+
+   (62) Ccm.Translate(Q, -0.75*Cz>)
+-> (63) p_Q_Ccm> = -0.75*Cz>
+-> (64) v_Ccm_N> = 0.75*(2.666667*L+sin(Q1))*U3*Ay> + U2*By> + 0.75*U1*Cx>
+-> (65) a_Ccm_N> = -2*L*U3^2*Ax> + (1.5*cos(Q1)*U1*U3+2*L*U3'+0.75*sin(Q1)*U3')*Ay>
+        + U2'*By> + (0.75*U1'-0.75*sin(Q1)*cos(Q1)*U3^2)*Cx> + (0.75*U1^2+0.75*
+        sin(Q1)^2*U3^2)*Cz>
+
+   (66) %%% Velocities %%%
+   (67) P.SetVelocity(N, Bcm, B)
+-> (68) v_P_N> = U2*By>
+
+   (69) %%% Constraints %%%
+   (70) Dependent[1] = dot(V_P_N>, By>)
+-> (71) Dependent[1] = U2
+
+   (72) Constrain(Dependent[U2])
+-> (73) U2 = 0
+-> (74) U2' = 0
+
+   (75) %%% Forces %%%
+   (76) System.AddForceGravity(g*Nx>)
+-> (77) Force_Acm> = Ma*g*Nx>
+-> (78) Force_Bcm> = Mb*g*Nx>
+-> (79) Force_Ccm> = Mc*g*Nx>
+
+   (80) zero = System.GetDynamicsKane()
+-> (81) zero[1] = 0.5625*(Mc+1.777778*IC)*U1' - 0.5625*cos(Q1)*(1.333333*Mc*g*
+        cos(tB+Q3)+(1.777778*IC*sin(Q1)+Mc*(2.666667*L+sin(Q1)))*U3^2)
+
+-> (82) zero[2] = 0.75*g*sin(tB+Q3)*(1.333333*Ma*L+Mc*(2.666667*L+sin(Q1)))
+        + 1.125*cos(Q1)*(1.777778*IC*sin(Q1)+Mc*(2.666667*L+sin(Q1)))*U1*U3
+        + 0.5625*(1.777778*IA+1.777778*Ma*L^2+1.777778*IC*sin(Q1)^2+Mc*(2.666667
+        *L+sin(Q1))^2)*U3'
+
+   (83) ODE(zero, U1', U3') Exam2_matlab.m
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>
