@@ -105,14 +105,14 @@ venv.bak/
 
 # Executables
 .exe
-MotionGenesis.exe
-MotionGenesisStartHere.lnk
-MotionGenesisStartHereBigFont.lnk
-MotionGenesisStartHereSmallFont.lnk
-MotionGenesisTerminal.lnk
-MotionGenesisTerminalBigFont.lnk
-MotionGenesisTerminalSmallFont.lnk
-PlotGenesis.lnk
+MotionGenesis.exe/
+MotionGenesisStartHere.lnk/
+MotionGenesisStartHereBigFont.lnk/
+MotionGenesisStartHereSmallFont.lnk/
+MotionGenesisTerminal.lnk/
+MotionGenesisTerminalBigFont.lnk/
+MotionGenesisTerminalSmallFont.lnk/
+PlotGenesis.lnk/
 
 # Motion Genesis License
 MGLicense.txt
