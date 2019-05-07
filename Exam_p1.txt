@@ -27,13 +27,14 @@ A.RotateY(D, Q2)
 %%% Translations %%%
 % R.SetPosition(Dcm, rD*Dy>)
 Ao.SetPosition(Dcm, -rD*Dy>)
-Acm.SetPosition(Dcm, 0.5*L*Ax>)
+Acm.SetPosition(Ao, 0.5*L*Ax>)
 P.SetPosition(Ao, L*Ax>)
 Q.SetPosition(Dcm, 3*L*Dx>)
 
 %%% Velocities %%%
 Acm.SetVelocityAcceleration(N, 0.7*U1*Ax> + U1*Ay> + U2*Az>)
 Dcm.SetVelocityAcceleration(N, 0>)
+Q.SetVelocityAcceleration(N, 0>)
 
 %%% Partial Velocities %%%
 VD_Partials =  Dcm.GetPartialVelocity(N)
@@ -52,3 +53,19 @@ System.AddForceGravity( g*Nx> )
 P.AddForceSpring(Q, k, L)
 
 %%% Effective Moments %%%
+NMD_Dcm> = dot(I_D_Dcm>>, alf_D_N>) + cross(w_D_N>, dot(I_D_Dcm>>, w_D_N>))
+NMA_Acm> = dot(I_A_Acm>>, alf_A_N>) + cross(w_A_N>, dot(I_A_Acm>>, w_A_N>))
+
+%%% Kane's Equations %%%
+F1 = dot(A.GetResultantForce(), VAcm_Partial1>) + dot(D.GetResultantForce(), VDcm_Partial1>) + dot(A.GetResultantMoment(Acm), WA_Partial1>) + dot(D.GetResultantMoment(Dcm), WD_Partial1>)
+F1_N = dot(Ma*a_Acm_N>, VAcm_Partial1>) + dot(Md*a_Dcm_N>, VDcm_Partial1>) + dot(NMA_Acm>, WA_Partial1>) + dot(NMD_Dcm>, WD_Partial1>)
+F2 = dot(A.GetResultantForce(), VAcm_Partial2>) + dot(D.GetResultantForce(), VDcm_Partial2>) + dot(A.GetResultantMoment(Acm), WA_Partial2>) + dot(D.GetResultantMoment(Dcm), WD_Partial2>)
+F2_N = dot(Ma*a_Acm_N>, VAcm_Partial2>) + dot(Md*a_Dcm_N>, VDcm_Partial2>) + dot(NMA_Acm>, WA_Partial2>) + dot(NMD_Dcm>, WD_Partial2>)
+
+zero[1] = explicit(F1 - F1_N)
+zero[2] = explicit(F2 - F2_N)
+
+zero_auto = System.GetDynamicsKane()
+check = explicit(zero + zero_auto)
+
+ODE(zero, U1', U2') KaneExam_p1.m

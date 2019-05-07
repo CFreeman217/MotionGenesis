@@ -117,7 +117,7 @@ PlotGenesis.lnk
 MGLicense.txt
 
 # Motion Genesis links
-*.lnk
+.lnk
 
 # Other Install stuff
 MGToolbox/
