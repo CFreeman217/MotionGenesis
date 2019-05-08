@@ -32,38 +32,54 @@
 -> (25) alf_B_A> = U2'*Bz>
 -> (26) alf_B_N> = (U1'+U2')*Az>
 
-   (27) %%% Translations %%%
-   (28) P.SetPosition(No, lA*Ax>)
--> (29) p_No_P> = lA*Ax>
+   (27) %%% Velocities %%%
+   (28) Ao.SetVelocityAcceleration(N, 0>)
+-> (29) v_Ao_N> = 0>
+-> (30) a_Ao_N> = 0>
 
-   (30) Q.SetPosition(P, lB*Bx>)
--> (31) p_P_Q> = lB*Bx>
+   (31) %%% Translations %%%
+   (32) P.Translate(Ao, lA*Ax>)
+-> (33) p_Ao_P> = lA*Ax>
+-> (34) v_P_N> = lA*U1*Ay>
+-> (35) a_P_N> = -lA*U1^2*Ax> + lA*U1'*Ay>
 
-   (32) %%% Forces %%%
-   (33) System.AddForceGravity( g*Nx> )
--> (34) Force_P> = mP*g*Nx>
--> (35) Force_Q> = mQ*g*Nx>
+   (36) Q.Translate(P, lB*Bx>)
+-> (37) p_P_Q> = lB*Bx>
+-> (38) v_Q_N> = lA*U1*Ay> + lB*(U1+U2)*By>
+-> (39) a_Q_N> = -lA*U1^2*Ax> + lA*U1'*Ay> - lB*(U1+U2)^2*Bx> + lB*(U1'+U2')*By>
 
-   (36) Q.AddForceSpring(No, k, lko)
--> (37) Force_Q_No> = -k*lA*(1-lko/sqrt(lA^2+lB^2+2*lA*lB*cos(Q2)))*Ax> - k*lB*
+   (40) %%% Forces %%%
+   (41) System.AddForceGravity( g*Nx> )
+-> (42) Force_P> = mP*g*Nx>
+-> (43) Force_Q> = mQ*g*Nx>
+
+   (44) Q.AddForceSpring(Ao, k, lko)
+-> (45) Force_Q_Ao> = -k*lA*(1-lko/sqrt(lA^2+lB^2+2*lA*lB*cos(Q2)))*Ax> - k*lB*
         (1-lko/sqrt(lA^2+lB^2+2*lA*lB*cos(Q2)))*Bx>
 
-   (38) N.AddTorque( -bA*U1*Nz> )
--> (39) Torque_N> = -bA*U1*Nz>
+   (46) A.AddTorque( -bA*U1*Nz> )
+-> (47) Torque_A> = -bA*U1*Nz>
 
-   (40) A.AddTorque( -bB*U2*Nz> )
--> (41) Torque_A> = -bB*U2*Nz>
+   (48) B.AddTorque( -bB*U2*Nz> )
+-> (49) Torque_B> = -bB*U2*Nz>
 
-   (42) P.SetVelocityAcceleration(N, 0>)
--> (43) v_P_N> = 0>
--> (44) a_P_N> = 0>
+   (50) zero = System.GetDynamicsKane()
+-> (51) zero[1] = mP*g*lA*sin(Q1) + mQ*g*(lA*sin(Q1)+lB*sin(Q1+Q2)) + bA*U1
+        + bB*U2 + mQ*lA*lB*sin(Q2)*(U1^2-(U1+U2)^2) + mQ*lB*(lB+lA*cos(Q2))*U2'
+        + (mP*lA^2+mQ*(lA^2+lB^2+2*lA*lB*cos(Q2)))*U1'
 
-   (45) Q.SetVelocityAcceleration(N, 0>)
--> (46) v_Q_N> = 0>
--> (47) a_Q_N> = 0>
+-> (52) zero[2] = mQ*g*lB*sin(Q1+Q2) + bB*U2 + mQ*lA*lB*sin(Q2)*U1^2 + mQ*lB^2*U2'
+        + mQ*lB*(lB+lA*cos(Q2))*U1' - k*lA*lB*sin(Q2)*(1-lko/sqrt(lA^2+lB^2+2*
+        lA*lB*cos(Q2)))
 
-   (48) zero = System.GetDynamicsKane()
--> (49) zero = [bB*U2;  0]
+   (53) Input tFinal = 30, tStep = 0.1, absError = 1.0E-07
+   (54) Input bA = 100 N*s/m, bB = 100 N*s/m, g = 9.81 m/s^2
+   (55) Input k = 250 N/m, lA = 1.5 m, lB = 2.0 m 
+   (56) Input lko = 1.0 m, mP = 10.0 kg, mQ = 15.0 kg
+   (57) Input Q1 = 1.5708 rad, Q2 = 1.5708 rad
+   (58) Input U1 = 0.0 rad, U2 = 0.0 rad
+   (59) OutputPlot t sec, Q1 rad, Q2 rad, U1 rad/s, U2 rad/s
+   (60) ODE(zero, U1', U2') Exam4_matlab.m
 
 </PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
 </DIV></BODY></HTML>

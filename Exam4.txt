@@ -21,8 +21,6 @@ B.RotateZ(A, Q2)
 
 %%% Velocities %%%
 Ao.SetVelocityAcceleration(N, 0>)
-% P.SetVelocityAcceleration(N, 0>)
-% Q.SetVelocityAcceleration(N, 0>)
 
 %%% Translations %%%
 P.Translate(Ao, lA*Ax>)
@@ -34,9 +32,14 @@ Q.AddForceSpring(Ao, k, lko)
 A.AddTorque( -bA*U1*Nz> )
 B.AddTorque( -bB*U2*Nz> )
 
-
-
 zero = System.GetDynamicsKane()
+Input tFinal = 30, tStep = 0.1, absError = 1.0E-07
+Input bA = 100 N*s/m, bB = 100 N*s/m, g = 9.81 m/s^2
+Input k = 250 N/m, lA = 1.5 m, lB = 2.0 m 
+Input lko = 1.0 m, mP = 10.0 kg, mQ = 15.0 kg
+Input Q1 = 1.5708 rad, Q2 = 1.5708 rad
+Input U1 = 0.0 rad, U2 = 0.0 rad
 
+OutputPlot t sec, Q1 rad, Q2 rad, U1 rad/s, U2 rad/s
 ODE(zero, U1', U2') Exam4_matlab.m
 save Exam4_output.html

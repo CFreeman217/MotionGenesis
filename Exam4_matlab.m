@@ -27,27 +27,27 @@ Q1Dt=0; Q2Dt=0; U1Dt=0; U2Dt=0;
 %-------------------------------+--------------------------+-------------------+-----------------
 % Quantity                      | Value                    | Units             | Description
 %-------------------------------|--------------------------|-------------------|-----------------
-bA                              =  100;                    % UNITS               Constant
-bB                              =  100;                    % UNITS               Constant
-g                               =  9.81;                   % UNITS               Constant
-k                               =  250;                    % UNITS               Constant
-lA                              =  1.5;                    % UNITS               Constant
-lB                              =  2;                      % UNITS               Constant
-lko                             =  1;                      % UNITS               Constant
-mP                              =  10;                     % UNITS               Constant
-mQ                              =  15;                     % UNITS               Constant
+bA                              =  100;                    % N*s/m               Constant
+bB                              =  100;                    % N*s/m               Constant
+g                               =  9.81;                   % m/s^2               Constant
+k                               =  250;                    % N/m                 Constant
+lA                              =  1.5;                    % m                   Constant
+lB                              =  2.0;                    % m                   Constant
+lko                             =  1.0;                    % m                   Constant
+mP                              =  10.0;                   % kg                  Constant
+mQ                              =  15.0;                   % kg                  Constant
 
-Q1                              =  .7854;                  % UNITS               Initial Value
-Q2                              =  .0873;                  % UNITS               Initial Value
-U1                              =  0;                      % UNITS               Initial Value
-U2                              =  0;                      % UNITS               Initial Value
+Q1                              =  1.5708;                 % rad                 Initial Value
+Q2                              =  1.5708;                 % rad                 Initial Value
+U1                              =  0.0;                    % rad                 Initial Value
+U2                              =  0.0;                    % rad                 Initial Value
 
 tInitial                        =  0.0;                    % second              Initial Time
-tFinal                          =  60;                     % second              Final Time
-tStep                           =  0.05;                   % second              Integration Step
+tFinal                          =  30;                     % second              Final Time
+tStep                           =  0.1;                    % second              Integration Step
 printIntScreen                  =  1;                      % 0 or +integer       0 is NO screen output
 printIntFile                    =  1;                      % 0 or +integer       0 is NO file   output
-absError                        =  1.0E-05;                %                     Absolute Error
+absError                        =  1.0E-07;                %                     Absolute Error
 relError                        =  1.0E-08;                %                     Relative Error
 %-------------------------------+--------------------------+-------------------+-----------------
 
@@ -55,6 +55,7 @@ relError                        =  1.0E-08;                %                    
 VAR = SetMatrixFromNamedQuantities;
 [t,VAR,Output] = IntegrateForwardOrBackward( tInitial, tFinal, tStep, absError, relError, VAR, printIntScreen, printIntFile );
 OutputToScreenOrFile( [], 0, 0 );   % Close output files.
+PlotOutputFiles;
 
 
 %===========================================================================
@@ -137,11 +138,7 @@ if( isempty(Output) ),
    if( ~isempty(FileIdentifier) ),
       fclose( FileIdentifier(1) );
       clear FileIdentifier;
-      fprintf( 1, '\n Output is in the file Exam4_matlab.1\n' );
-      fprintf( 1, '\n Note: To automate plotting, issue the command OutputPlot in MotionGenesis.\n' );
-      fprintf( 1, '\n To load and plot columns 1 and 2 with a solid line and columns 1 and 3 with a dashed line, enter:\n' );
-      fprintf( 1, '    someName = load( ''Exam4_matlab.1'' );\n' );
-      fprintf( 1, '    plot( someName(:,1), someName(:,2), ''-'', someName(:,1), someName(:,3), ''--'' )\n\n' );
+      fprintf( 1, '\n Output is in the file Exam4_matlab.1\n\n' );
    end
    clear hasHeaderInformationBeenWritten;
    return;
@@ -150,13 +147,13 @@ end
 if( isempty(hasHeaderInformationBeenWritten) ),
    if( shouldPrintToScreen ),
       fprintf( 1,                '%%       t             Q1             Q2             U1             U2\n' );
-      fprintf( 1,                '%%   (second)        (UNITS)        (UNITS)        (UNITS)        (UNITS)\n\n' );
+      fprintf( 1,                '%%     (sec)          (rad)          (rad)         (rad/s)        (rad/s)\n\n' );
    end
    if( shouldPrintToFile && isempty(FileIdentifier) ),
       FileIdentifier(1) = fopen('Exam4_matlab.1', 'wt');   if( FileIdentifier(1) == -1 ), error('Error: unable to open file Exam4_matlab.1'); end
       fprintf(FileIdentifier(1), '%% FILE: Exam4_matlab.1\n%%\n' );
       fprintf(FileIdentifier(1), '%%       t             Q1             Q2             U1             U2\n' );
-      fprintf(FileIdentifier(1), '%%   (second)        (UNITS)        (UNITS)        (UNITS)        (UNITS)\n\n' );
+      fprintf(FileIdentifier(1), '%%     (sec)          (rad)          (rad)         (rad/s)        (rad/s)\n\n' );
    end
    hasHeaderInformationBeenWritten = 1;
 end
@@ -176,6 +173,20 @@ if( numberOfOutputQuantities > 0 ),
    end
    fprintf( fileIdentifier, '\n' );
 end
+end
+
+
+
+%===========================================================================
+function PlotOutputFiles
+%===========================================================================
+if( printIntFile == 0 ),  return;  end
+figure;
+data = load( 'Exam4_matlab.1' ); 
+plot( data(:,1),data(:,2),'-b', data(:,1),data(:,3),'-.g', data(:,1),data(:,4),'--r', data(:,1),data(:,5),'-m', 'LineWidth',3 );
+legend( 'Q1 (rad)', 'Q2 (rad)', 'U1 (rad/s)', 'U2 (rad/s)' );
+xlabel('t (sec)');   % ylabel('Some y-axis label');   title('Some plot title');
+clear data;
 end
 
 
