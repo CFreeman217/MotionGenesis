@@ -42,4 +42,4 @@ Input U1 = 0.0 rad, U2 = 0.0 rad
 
 OutputPlot t sec, Q1 rad, Q2 rad, U1 rad/s, U2 rad/s
 ODE(zero, U1', U2') Exam4_matlab.m
-save Exam4_output.html
+save Exam4_output.all
