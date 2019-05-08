@@ -1,0 +1,82 @@
+<HTML><HEAD><TITLE>MotionGenesis: Exam3_output.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>Exam3_output.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Final Exam Problem 3
+   (3) NewtonianFrame N 
+   (4) RigidBody A, B 
+   (5) Constant rA, rB, g, k
+   (6) Point P()
+   (7) Variable Q{1:3}', U{1:3}' 
+   (8) A.SetMass(mA)
+   (9) B.SetMass(mB)
+   (10) A.SetInertia(Acm, mA*rA^2*(Ax>*Ax>))
+   (11) B.SetInertia(Bcm, mB*rB^2/4*(2*Bx>*Bx> + By>*By> + Bz>*Bz>))
+   (12) SetGeneralizedSpeed(U1, U2, U3)
+   (13) %%% Kinematical Equations %%%
+   (14) Q1' = U1
+-> (15) Q1' = U1
+
+   (16) Q2' = U2
+-> (17) Q2' = U2
+
+   (18) Q3' = U3
+-> (19) Q3' = U3
+
+   (20) %%% Rotations %%%
+   (21) A.RotateX(N, Q1)
+-> (22) A_N = [1, 0, 0;  0, cos(Q1), sin(Q1);  0, -sin(Q1), cos(Q1)]
+-> (23) w_A_N> = U1*Ax>
+-> (24) alf_A_N> = U1'*Ax>
+
+   (25) B.RotateX(A, -Q3)
+-> (26) B_A = [1, 0, 0;  0, cos(Q3), -sin(Q3);  0, sin(Q3), cos(Q3)]
+-> (27) w_B_A> = -U3*Bx>
+-> (28) w_B_N> = (U1-U3)*Bx>
+-> (29) alf_B_A> = -U3'*Bx>
+-> (30) alf_B_N> = (U1'-U3')*Bx>
+
+   (31) %%% Translations %%%
+   (32) P.SetPosition(Acm, -rA*Nz>)
+-> (33) p_Acm_P> = -rA*Nz>
+
+   (34) Bcm.SetPosition(Acm, -rB*Az>)
+-> (35) p_Acm_Bcm> = -rB*Az>
+
+   (36) %%% Velocities %%%
+   (37) P.SetVelocity(N, U2*Ny>)
+-> (38) v_P_N> = U2*Ny>
+
+   (39) Acm.SetVelocityAcceleration(N, 0>)
+-> (40) v_Acm_N> = 0>
+-> (41) a_Acm_N> = 0>
+
+   (42) Bcm.SetVelocityAcceleration(N, 0>)
+-> (43) v_Bcm_N> = 0>
+-> (44) a_Bcm_N> = 0>
+
+   (45) %%% Constraints %%%
+   (46) Dependent[1] = dot(v_P_N>, Ny>)
+-> (47) Dependent[1] = U2
+
+   (48) Constrain(Dependent[U2])
+-> (49) U2 = 0
+-> (50) U2' = 0
+
+   (51) %%% Forces %%%
+   (52) System.AddForceGravity( -g*Nz> )
+-> (53) Force_Acm> = -mA*g*Nz>
+-> (54) Force_Bcm> = -mB*g*Nz>
+
+   (55) B.AddTorque(A, -2*k*Q3*Ax>)
+-> (56) Torque_B_A> = -2*k*Q3*Ax>
+
+   (57) zero = System.GetDynamicsKane()
+-> (58) zero[1] = 0.5*(mB*rB^2+2*mA*rA^2)*U1' - 0.5*mB*rB^2*U3'
+-> (59) zero[2] = 0.5*mB*rB^2*U3' - 2*k*Q3 - 0.5*mB*rB^2*U1'
+
+   (60) ODE(zero, U1', U3') Exam3_matlab.m 
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>

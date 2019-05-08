@@ -1,0 +1,42 @@
+% ME 493: Intermediate Dynamics
+% Final Exam Problem 4
+
+NewtonianFrame N 
+RigidFrame A, B 
+Constant lA, lB, g, k, lko, bA, bB
+Particle P, Q
+Variable Q{1:2}', U{1:2}' 
+P.SetMass(mP)
+Q.SetMass(mQ)
+
+SetGeneralizedSpeed(U1, U2)
+
+%%% Kinematical Equations %%%
+Q1' = U1
+Q2' = U2
+
+%%% Rotations %%%
+A.RotateZ(N, Q1)
+B.RotateZ(A, Q2)
+
+%%% Velocities %%%
+Ao.SetVelocityAcceleration(N, 0>)
+% P.SetVelocityAcceleration(N, 0>)
+% Q.SetVelocityAcceleration(N, 0>)
+
+%%% Translations %%%
+P.Translate(Ao, lA*Ax>)
+Q.Translate(P, lB*Bx>)
+
+%%% Forces %%%
+System.AddForceGravity( g*Nx> )
+Q.AddForceSpring(Ao, k, lko)
+A.AddTorque( -bA*U1*Nz> )
+B.AddTorque( -bB*U2*Nz> )
+
+
+
+zero = System.GetDynamicsKane()
+
+ODE(zero, U1', U2') Exam4_matlab.m
+save Exam4_output.html

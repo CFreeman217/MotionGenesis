@@ -1,0 +1,44 @@
+% ME 493: Intermediate Dynamics
+% Final Exam Problem 3
+
+NewtonianFrame N 
+RigidBody A, B 
+Constant rA, rB, g, k
+Point P()
+Variable Q{1:3}', U{1:3}' 
+A.SetMass(mA)
+B.SetMass(mB)
+A.SetInertia(Acm, mA*rA^2*(Ax>*Ax>))
+B.SetInertia(Bcm, mB*rB^2/4*(2*Bx>*Bx> + By>*By> + Bz>*Bz>))
+SetGeneralizedSpeed(U1, U2, U3)
+
+%%% Kinematical Equations %%%
+Q1' = U1
+Q2' = U2
+Q3' = U3
+
+%%% Rotations %%%
+A.RotateX(N, Q1)
+B.RotateX(A, -Q3)
+
+%%% Translations %%%
+P.SetPosition(Acm, -rA*Nz>)
+Bcm.SetPosition(Acm, -rB*Az>)
+
+%%% Velocities %%%
+P.SetVelocity(N, U2*Ny>)
+Acm.SetVelocityAcceleration(N, 0>)
+Bcm.SetVelocityAcceleration(N, 0>)
+
+%%% Constraints %%%
+Dependent[1] = dot(v_P_N>, Ny>)
+Constrain(Dependent[U2])
+
+%%% Forces %%%
+System.AddForceGravity( -g*Nz> )
+B.AddTorque(A, -2*k*Q3*Ax>)
+
+zero = System.GetDynamicsKane()
+
+ODE(zero, U1', U3') Exam3_matlab.m 
+save Exam3_output.html

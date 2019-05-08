@@ -1,0 +1,69 @@
+<HTML><HEAD><TITLE>MotionGenesis: Exam4_output.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>Exam4_output.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Final Exam Problem 4
+   (3) NewtonianFrame N 
+   (4) RigidFrame A, B 
+   (5) Constant lA, lB, g, k, lko, bA, bB
+   (6) Particle P, Q
+   (7) Variable Q{1:2}', U{1:2}' 
+   (8) P.SetMass(mP)
+   (9) Q.SetMass(mQ)
+   (10) SetGeneralizedSpeed(U1, U2)
+   (11) %%% Kinematical Equations %%%
+   (12) Q1' = U1
+-> (13) Q1' = U1
+
+   (14) Q2' = U2
+-> (15) Q2' = U2
+
+   (16) %%% Rotations %%%
+   (17) A.RotateZ(N, Q1)
+-> (18) A_N = [cos(Q1), sin(Q1), 0;  -sin(Q1), cos(Q1), 0;  0, 0, 1]
+-> (19) w_A_N> = U1*Az>
+-> (20) alf_A_N> = U1'*Az>
+
+   (21) B.RotateZ(A, Q2)
+-> (22) B_A = [cos(Q2), sin(Q2), 0;  -sin(Q2), cos(Q2), 0;  0, 0, 1]
+-> (23) w_B_A> = U2*Bz>
+-> (24) w_B_N> = (U1+U2)*Az>
+-> (25) alf_B_A> = U2'*Bz>
+-> (26) alf_B_N> = (U1'+U2')*Az>
+
+   (27) %%% Translations %%%
+   (28) P.SetPosition(No, lA*Ax>)
+-> (29) p_No_P> = lA*Ax>
+
+   (30) Q.SetPosition(P, lB*Bx>)
+-> (31) p_P_Q> = lB*Bx>
+
+   (32) %%% Forces %%%
+   (33) System.AddForceGravity( g*Nx> )
+-> (34) Force_P> = mP*g*Nx>
+-> (35) Force_Q> = mQ*g*Nx>
+
+   (36) Q.AddForceSpring(No, k, lko)
+-> (37) Force_Q_No> = -k*lA*(1-lko/sqrt(lA^2+lB^2+2*lA*lB*cos(Q2)))*Ax> - k*lB*
+        (1-lko/sqrt(lA^2+lB^2+2*lA*lB*cos(Q2)))*Bx>
+
+   (38) N.AddTorque( -bA*U1*Nz> )
+-> (39) Torque_N> = -bA*U1*Nz>
+
+   (40) A.AddTorque( -bB*U2*Nz> )
+-> (41) Torque_A> = -bB*U2*Nz>
+
+   (42) P.SetVelocityAcceleration(N, 0>)
+-> (43) v_P_N> = 0>
+-> (44) a_P_N> = 0>
+
+   (45) Q.SetVelocityAcceleration(N, 0>)
+-> (46) v_Q_N> = 0>
+-> (47) a_Q_N> = 0>
+
+   (48) zero = System.GetDynamicsKane()
+-> (49) zero = [bB*U2;  0]
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>
