@@ -55,6 +55,6 @@ Input IC = 0.04 kg*m^2, Q1 = 0.2618 rad, Q2 = 0.02 m
 Input Q3 = 0.2618 rad, U1 = 0.0873 rad/s
 Input U3 = 0.0 rad/s
 
-OutputPlot t sec, Q1 deg, Q2 m, Q3 deg
+OutputPlot t sec, Q1 deg, Q2 m, Q3 deg, U1 rad/s, U2 m/s, U3 rad/s
 ODE(zero, U1', U3') Exam2_matlab.m
 save Exam2_output.all

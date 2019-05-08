@@ -8,8 +8,10 @@ Point P()
 Variable Q{1:3}', U{1:3}' 
 A.SetMass(mA)
 B.SetMass(mB)
-A.SetInertia(Acm, mA*rA^2*(Ax>*Ax>))
-B.SetInertia(Bcm, mB*rB^2/4*(2*Bx>*Bx> + By>*By> + Bz>*Bz>))
+A.SetInertia(Acm, IA, 0, 0)
+B.SetInertia(Bcm, IB, 0, 0)
+% A.SetInertia(Acm, mA*rA^2*(Ax>*Ax>))
+% B.SetInertia(Bcm, mB*rB^2/4*(2*Bx>*Bx> + By>*By> + Bz>*Bz>))
 SetGeneralizedSpeed(U1, U2, U3)
 
 %%% Kinematical Equations %%%
@@ -40,5 +42,5 @@ B.AddTorque(A, -2*k*Q3*Ax>)
 
 zero = System.GetDynamicsKane()
 
-ODE(zero, U1', U3') Exam3_matlab.m 
+% ODE(zero, U1', U3') Exam3_matlab.m 
 save Exam3_output.all

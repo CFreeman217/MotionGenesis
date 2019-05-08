@@ -133,11 +133,14 @@ end
 %===========================================================================
 function Output = mdlOutputs( t, VAR, uSimulink )
 %===========================================================================
-Output = zeros( 1, 4 );
+Output = zeros( 1, 7 );
 Output(1) = t;
 Output(2) = Q1*RADtoDEG;
 Output(3) = Q2;
 Output(4) = Q3*RADtoDEG;
+Output(5) = U1;
+Output(6) = U2;
+Output(7) = U3;
 end
 
 
@@ -158,20 +161,20 @@ end
 
 if( isempty(hasHeaderInformationBeenWritten) ),
    if( shouldPrintToScreen ),
-      fprintf( 1,                '%%       t             Q1             Q2             Q3\n' );
-      fprintf( 1,                '%%     (sec)          (deg)           (m)           (deg)\n\n' );
+      fprintf( 1,                '%%       t             Q1             Q2             Q3             U1             U2             U3\n' );
+      fprintf( 1,                '%%     (sec)          (deg)           (m)           (deg)         (rad/s)         (m/s)         (rad/s)\n\n' );
    end
    if( shouldPrintToFile && isempty(FileIdentifier) ),
       FileIdentifier(1) = fopen('Exam2_matlab.1', 'wt');   if( FileIdentifier(1) == -1 ), error('Error: unable to open file Exam2_matlab.1'); end
       fprintf(FileIdentifier(1), '%% FILE: Exam2_matlab.1\n%%\n' );
-      fprintf(FileIdentifier(1), '%%       t             Q1             Q2             Q3\n' );
-      fprintf(FileIdentifier(1), '%%     (sec)          (deg)           (m)           (deg)\n\n' );
+      fprintf(FileIdentifier(1), '%%       t             Q1             Q2             Q3             U1             U2             U3\n' );
+      fprintf(FileIdentifier(1), '%%     (sec)          (deg)           (m)           (deg)         (rad/s)         (m/s)         (rad/s)\n\n' );
    end
    hasHeaderInformationBeenWritten = 1;
 end
 
-if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:4) );  end
-if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:4) );  end
+if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:7) );  end
+if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:7) );  end
 end
 
 
@@ -195,8 +198,8 @@ function PlotOutputFiles
 if( printIntFile == 0 ),  return;  end
 figure;
 data = load( 'Exam2_matlab.1' ); 
-plot( data(:,1),data(:,2),'-b', data(:,1),data(:,3),'-.g', data(:,1),data(:,4),'--r', 'LineWidth',3 );
-legend( 'Q1 (deg)', 'Q2 (m)', 'Q3 (deg)' );
+plot( data(:,1),data(:,2),'-b', data(:,1),data(:,3),'-.g', data(:,1),data(:,4),'--r', data(:,1),data(:,5),'-m', data(:,1),data(:,6),'-.k', data(:,1),data(:,7),'--b', 'LineWidth',3 );
+legend( 'Q1 (deg)', 'Q2 (m)', 'Q3 (deg)', 'U1 (rad/s)', 'U2 (m/s)', 'U3 (rad/s)' );
 xlabel('t (sec)');   % ylabel('Some y-axis label');   title('Some plot title');
 clear data;
 end

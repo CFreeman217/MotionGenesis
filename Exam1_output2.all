@@ -1,0 +1,165 @@
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Final Exam Problem 1
+   (3) NewtonianFrame N 
+   (4) RigidBody D, A 
+   (5) Constant L, rD, g, k, Id, Jx, Jy
+   (6) Point R(A), P(A), Q()
+   (7) Variable Q1', Q2', U1', U2'
+   (8) SetGeneralizedSpeed(U1, U2)
+   (9) D.SetMass(Md)
+   (10) % D.SetInertia(Dcm, Id*Nx>*Nx> + 0*Ny>*Ny> + 0*Nz>*Nz>)
+   (11) D.SetInertia(Dcm, Md*rD^2/4*(2*Dx>*Dx> + Dy>*Dy> + Dz>*Dz>))
+   (12) A.SetMass(Ma)
+   (13) A.SetInertia(Acm, (Jx*Ax>*Ax> + Jy*Ay>*Ay>+ Jy*Az>*Az>))
+   (14) rD = 0.7*L
+-> (15) rD = 0.7*L
+
+   (16) g = 9.81
+-> (17) g = 9.81
+
+   (18) %%% Kinematical Equations %%%
+   (19) Q1' = U1
+-> (20) Q1' = U1
+
+   (21) Q2' = U2
+-> (22) Q2' = U2
+
+   (23) %%% Rotations %%%
+   (24) D.RotateX(N, -Q1)
+-> (25) D_N = [1, 0, 0;  0, cos(Q1), -sin(Q1);  0, sin(Q1), cos(Q1)]
+-> (26) w_D_N> = -U1*Dx>
+-> (27) alf_D_N> = -U1'*Dx>
+
+   (28) A.RotateY(D, Q2)
+-> (29) A_D = [cos(Q2), 0, -sin(Q2);  0, 1, 0;  sin(Q2), 0, cos(Q2)]
+-> (30) w_A_D> = U2*Ay>
+-> (31) w_A_N> = -cos(Q2)*U1*Ax> + U2*Ay> - sin(Q2)*U1*Az>
+-> (32) alf_A_D> = U2'*Ay>
+-> (33) alf_A_N> = (sin(Q2)*U1*U2-cos(Q2)*U1')*Ax> + U2'*Ay> + (-cos(Q2)*U1*U2-
+        sin(Q2)*U1')*Az>
+
+   (34) %%% Translations %%%
+   (35) % R.SetPosition(Dcm, rD*Dy>)
+   (36) Ao.SetPosition(Dcm, -rD*Dy>)
+-> (37) p_Dcm_Ao> = -rD*Dy>
+
+   (38) Acm.SetPosition(Ao, 0.5*L*Ax>)
+-> (39) p_Ao_Acm> = 0.5*L*Ax>
+
+   (40) P.SetPosition(Ao, L*Ax>)
+-> (41) p_Ao_P> = L*Ax>
+
+   (42) Q.SetPosition(Dcm, 3*L*Dx>)
+-> (43) p_Dcm_Q> = 3*L*Dx>
+
+   (44) %%% Velocities %%%
+   (45) Acm.SetVelocityAcceleration(N, 0.7*U1*Ax> + U1*Ay> + U2*Az>)
+-> (46) v_Acm_N> = 0.7*U1*Ax> + U1*Ay> + U2*Az>
+-> (47) a_Acm_N> = (U2^2+sin(Q2)*U1^2+0.7*U1')*Ax> + (cos(Q2)*U1*U2+U1'-0.7*sin
+        (Q2)*U1^2)*Ay> + (U2'-0.7*U1*U2-cos(Q2)*U1^2)*Az>
+
+   (48) Dcm.SetVelocityAcceleration(N, 0>)
+-> (49) v_Dcm_N> = 0>
+-> (50) a_Dcm_N> = 0>
+
+   (51) Q.SetVelocityAcceleration(N, 0>)
+-> (52) v_Q_N> = 0>
+-> (53) a_Q_N> = 0>
+
+   (54) %%% Partial Velocities %%%
+   (55) VD_Partials =  Dcm.GetPartialVelocity(N)
+-> (56) VD_Partials = [0>;  0>]
+
+   (57) VDcm_Partial1> = VD_Partials[1]
+-> (58) VDcm_Partial1> = 0>
+
+   (59) VDcm_Partial2> = VD_Partials[2]
+-> (60) VDcm_Partial2> = 0>
+
+   (61) VA_Partials = Acm.GetPartialVelocity(N)
+-> (62) VA_Partials = [0.7*Ax> + Ay>;  Az>]
+
+   (63) VAcm_Partial1> = VA_Partials[1]
+-> (64) VAcm_Partial1> = 0.7*Ax> + Ay>
+
+   (65) VAcm_Partial2> = VA_Partials[2]
+-> (66) VAcm_Partial2> = Az>
+
+   (67) WD_Partial1> = D.GetPartialAngularVelocity(N, U1)
+-> (68) WD_Partial1> = -Dx>
+
+   (69) WD_Partial2> = D.GetPartialAngularVelocity(N, U2)
+-> (70) WD_Partial2> = 0>
+
+   (71) WA_Partial1> = A.GetPartialAngularVelocity(N, U1)
+-> (72) WA_Partial1> = -cos(Q2)*Ax> - sin(Q2)*Az>
+
+   (73) WA_Partial2> = A.GetPartialAngularVelocity(N, U2)
+-> (74) WA_Partial2> = Ay>
+
+   (75) %%% Forces %%%
+   (76) System.AddForceGravity( g*Nx> )
+-> (77) Force_Acm> = Ma*g*Nx>
+-> (78) Force_Dcm> = Md*g*Nx>
+
+   (79) P.AddForceSpring(Q, k, L)
+-> (80) Force_P_Q> = -k*L*(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2)))*Ax> + 3*k*L*(1-
+        L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2)))*Dx> + k*rD*(1-L/sqrt(rD^2+10*L^2-6*L^2
+        *cos(Q2)))*Dy>
+
+   (81) %%% Effective Moments %%%
+   (82) NMD_Dcm> = dot(I_D_Dcm>>, alf_D_N>) + cross(w_D_N>, dot(I_D_Dcm>>, w_D_N>))
+-> (83) NMD_Dcm> = -0.5*Md*rD^2*U1'*Dx>
+
+   (84) NMA_Acm> = dot(I_A_Acm>>, alf_A_N>) + cross(w_A_N>, dot(I_A_Acm>>, w_A_N>))
+-> (85) NMA_Acm> = Jx*(sin(Q2)*U1*U2-cos(Q2)*U1')*Ax> + (Jx*sin(Q2)*cos(Q2)*U1^2
+        +Jy*U2'-Jy*sin(Q2)*cos(Q2)*U1^2)*Ay> + (Jx*cos(Q2)*U1*U2-2*Jy*cos(Q2)*
+        U1*U2-Jy*sin(Q2)*U1')*Az>
+
+   (86) %%% Kane's Equations %%%
+   (87) F1 = dot(A.GetResultantForce(), VAcm_Partial1>) + dot(D.GetResultantForce(), VDcm_Partial1>) + dot(A.GetResultantMoment(Acm), WA_Partial1>) + dot(D.GetResultantMoment(Dcm), WD_Partial1>)
+-> (88) F1 = k*rD*(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2))) + 0.7*cos(Q2)*(Ma*g+3*k
+        *L*(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2)))) - 0.7*k*L*(1-L/sqrt(rD^2+10*L^2
+        -6*L^2*cos(Q2))) - 0.5*k*L*rD*sin(Q2)*(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(
+        Q2)))
+
+   (89) F1_N = dot(Ma*a_Acm_N>, VAcm_Partial1>) + dot(Md*a_Dcm_N>, VDcm_Partial1>) + dot(NMA_Acm>, WA_Partial1>) + dot(NMD_Dcm>, WD_Partial1>)
+-> (90) F1_N = 0.5*Md*rD^2*U1' + 0.7*Ma*(U2^2+1.428571*cos(Q2)*U1*U2+2.128571*
+        U1') + Jy*sin(Q2)*(2*cos(Q2)*U1*U2+sin(Q2)*U1') - Jx*cos(Q2)*(2*sin(Q2)
+        *U1*U2-cos(Q2)*U1')
+
+   (91) F2 = dot(A.GetResultantForce(), VAcm_Partial2>) + dot(D.GetResultantForce(), VDcm_Partial2>) + dot(A.GetResultantMoment(Acm), WA_Partial2>) + dot(D.GetResultantMoment(Dcm), WD_Partial2>)
+-> (92) F2 = sin(Q2)*(Ma*g+3*k*L*(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2)))-1.5*k*L^2
+        *(1-L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2))))
+
+   (93) F2_N = dot(Ma*a_Acm_N>, VAcm_Partial2>) + dot(Md*a_Dcm_N>, VDcm_Partial2>) + dot(NMA_Acm>, WA_Partial2>) + dot(NMD_Dcm>, WD_Partial2>)
+-> (94) F2_N = Jx*sin(Q2)*cos(Q2)*U1^2 + Jy*U2' - Jy*sin(Q2)*cos(Q2)*U1^2
+        - 0.7*Ma*(U1*U2+1.428571*cos(Q2)*U1^2-1.428571*U2')
+
+   (95) zero[1] = explicit(F1 - F1_N)
+-> (96) zero[1] = 0.1428869*k*L^2*sin(Q2)*(-2.44949+L/sqrt(-L^2*(-1.748333+cos(
+        Q2)))) + 0.8573214*cos(Q2)*(8.009831*Ma-k*L*(-2.44949+L/sqrt(-L^2*(-1.748333
+        +cos(Q2))))) + Jx*cos(Q2)*(2*sin(Q2)*U1*U2-cos(Q2)*U1') - 0.245*Md*L^2*U1'
+        - 0.7*Ma*(U2^2+1.428571*cos(Q2)*U1*U2+2.128571*U1') - Jy*sin(Q2)*(2*cos
+        (Q2)*U1*U2+sin(Q2)*U1')
+
+   (97) zero[2] = explicit(F2 - F2_N)
+-> (98) zero[2] = Jy*sin(Q2)*cos(Q2)*U1^2 + 0.7*Ma*(U1*U2+1.428571*cos(Q2)*U1^2
+        -1.428571*U2') - 0.6123724*sin(Q2)*(2*k*L*(-2.44949+L/sqrt(-L^2*(-1.748333
+        +cos(Q2))))-16.01966*Ma-k*L^2*(-2.44949+L/sqrt(-L^2*(-1.748333+cos(Q2)))))
+        - Jx*sin(Q2)*cos(Q2)*U1^2 - Jy*U2'
+
+   (99) zero_auto = System.GetDynamicsKane()
+-> (100) zero_auto[1] = 0.5*(2.98*Ma+2*Jx+Md*rD^2-2*(Jx-Jy)*sin(Q2)^2)*U1'
+         - 0.7*Ma*g*cos(Q2) - 0.5*k*(4.2*L*cos(Q2)-1.4*L-rD*(-2+L*sin(Q2)))*(1-
+         L/sqrt(rD^2+10*L^2-6*L^2*cos(Q2))) - 0.7*U2*(2.857143*Jx*sin(Q2)*cos(
+         Q2)*U1-2.857143*Jy*sin(Q2)*cos(Q2)*U1-Ma*(U2+1.428571*cos(Q2)*U1))
+
+-> (101) zero_auto[2] = (Ma+Jy)*U2' - sin(Q2)*(Ma*g-1.5*k*L*(-2+L)*(1-L/sqrt(rD^2
+         +10*L^2-6*L^2*cos(Q2)))) - 0.7*U1*(Ma*(U2+1.428571*cos(Q2)*U1)-1.428571
+         *(Jx-Jy)*sin(Q2)*cos(Q2)*U1)
+
+   (102) check = explicit(zero + zero_auto)
+-> (103) check = [0;  0]
+
+   (104) % ODE(zero, U1', U2') Exam1_matlab.m
