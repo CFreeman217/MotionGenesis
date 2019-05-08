@@ -32,6 +32,7 @@ for filename in os.listdir('.'):
         q2 = rad2deg(q2)
         finalQ1 = q1[-1]
         finalQ2 = q2[-1]
+
         # plt.plot(time,q1, label='Q1 Final Angle = {:.4f}$^\circ$'.format(finalQ1))
         # plt.plot(time,q2, label='Q2 Final Angle = {:.4f}$^\circ$'.format(finalQ2))
         # plt.xlabel('Time (s)')
@@ -48,56 +49,56 @@ for filename in os.listdir('.'):
         topAng = math.asin(sideB*math.sin(angGam)/springLength)
         botAng = 180 - math.degrees(angGam) - math.degrees(topAng)
         print('Spring Length = {:.4f}'.format(springLength))
-        # print(sys.version)
 
-        # # Set up turtle drawing program
-        # display = turtle.Screen()
-        # # display.setup(width=6*turMag, height = 6*turMag)
-        # turtle.mode("standard")
-        # turtle.speed(0)
-        # turtle.home()
-        # # Draw Ceiling and set position in center
-        # stageSize = 5*turMag
-        # turtle.pensize(8); turtle.pencolor("black")
-        # turtle.pu(); turtle.setheading(0)
-        # turtle.down(); turtle.forward(stageSize); turtle.pu()
-        # turtle.goto(stageSize/2, 0)
-        # # Draw first bar
-        # turtle.pensize(4); turtle.pencolor('blue')
-        # turtle.setheading(180-finalQ1)
-        # turtle.down(); turtle.forward(sideA * turMag); turtle.pu()
-        # ploc = turtle.pos()
-        # # Draw Second Bar
-        # turtle.left(180-math.degrees(angGam))
-        # turtle.down(); turtle.forward(sideB * turMag); turtle.pu()
-        # qloc = turtle.pos()
-        # # Draw Spring
-        # turtle.left(180 - botAng)
-        # turtle.pencolor('#CCCCCC')
-        # drawSpring(springLength * turMag)
-        # # Draw Points
-        # circSize = 3
-        # # Point O
-        # turtle.pencolor('black'); turtle.pensize(3)
-        # turtle.setheading(90); turtle.fd(circSize/2)
-        # turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
-        # turtle.setheading(90); turtle.fd(circSize*2)
-        # turtle.write('Point O', font=('Arial', 10, 'bold'))
 
-        # turtle.goto(ploc)
-        # turtle.setheading(90); turtle.fd(circSize/2)
-        # turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
-        # turtle.setheading(180); turtle.fd(circSize*15)
-        # turtle.write('Point P', font=('Arial', 10, 'bold'))
+        # Set up turtle drawing program
+        display = turtle.Screen()
+        # display.setup(width=6*turMag, height = 6*turMag)
+        turtle.mode("standard")
+        turtle.speed(0)
+        turtle.home()
+        # Draw Ceiling and set position in center
+        stageSize = 5*turMag
+        turtle.pensize(8); turtle.pencolor("black")
+        turtle.pu(); turtle.setheading(0)
+        turtle.down(); turtle.forward(stageSize); turtle.pu()
+        turtle.goto(stageSize/2, 0)
+        # Draw first bar
+        turtle.pensize(4); turtle.pencolor('blue')
+        turtle.setheading(180-finalQ1)
+        turtle.down(); turtle.forward(sideA * turMag); turtle.pu()
+        ploc = turtle.pos()
+        # Draw Second Bar
+        turtle.left(180-math.degrees(angGam))
+        turtle.down(); turtle.forward(sideB * turMag); turtle.pu()
+        qloc = turtle.pos()
+        # Draw Spring
+        turtle.left(180 - botAng)
+        turtle.pencolor('#CCCCCC')
+        drawSpring(springLength * turMag)
+        # Draw Points
+        circSize = 3
+        # Point O
+        turtle.pencolor('black'); turtle.pensize(3)
+        turtle.setheading(90); turtle.fd(circSize/2)
+        turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
+        turtle.setheading(90); turtle.fd(circSize*2)
+        turtle.write('Point O', font=('Arial', 10, 'bold'))
 
-        # turtle.goto(qloc)
-        # turtle.setheading(90); turtle.fd(circSize/2)
-        # turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
-        # turtle.setheading(270); turtle.fd(circSize*5)
-        # turtle.write('Point Q', font=('Arial', 10, 'bold'))
-        # turtle.ht()
+        turtle.goto(ploc)
+        turtle.setheading(90); turtle.fd(circSize/2)
+        turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
+        turtle.setheading(180); turtle.fd(circSize*15)
+        turtle.write('Point P', font=('Arial', 10, 'bold'))
+
+        turtle.goto(qloc)
+        turtle.setheading(90); turtle.fd(circSize/2)
+        turtle.down(); turtle.begin_fill(); turtle.circle(circSize); turtle.end_fill(); turtle.pu()
+        turtle.setheading(270); turtle.fd(circSize*5)
+        turtle.write('Point Q', font=('Arial', 10, 'bold'))
+        turtle.ht()
         # display.getcanvas().postscript(file='Exam4_diagram.ps')
-        # display.exitonclick()
+        display.exitonclick()
 
 
 
