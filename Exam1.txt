@@ -3,15 +3,16 @@
 
 NewtonianFrame N 
 RigidBody D, A 
-Constant L, rD, g, k
+Constant L, rD, g, k, Id, Jx, Jy
 Point R(A), P(A), Q()
 Variable Q1', Q2', U1', U2'
 SetGeneralizedSpeed(U1, U2)
 
 D.SetMass(Md)
-D.SetInertia(Dcm, Md*rD^2/4*(Dx>*Dx> + Dy>*Dy> + 2*Dz>*Dz>))
+% D.SetInertia(Dcm, Id*Nx>*Nx> + 0*Ny>*Ny> + 0*Nz>*Nz>)
+D.SetInertia(Dcm, Md*rD^2/4*(2*Dx>*Dx> + Dy>*Dy> + Dz>*Dz>))
 A.SetMass(Ma)
-A.SetInertia(Acm, IAx, IAy, IAz)
+A.SetInertia(Acm, (Jx*Ax>*Ax> + Jy*Ay>*Ay>+ Jy*Az>*Az>))
 
 rD = 0.7*L
 g = 9.81
@@ -68,5 +69,5 @@ zero[2] = explicit(F2 - F2_N)
 zero_auto = System.GetDynamicsKane()
 check = explicit(zero + zero_auto)
 
-ODE(zero, U1', U2') Exam1_matlab.m
-save Exam1_output.html
+% ODE(zero, U1', U2') Exam1_matlab.m
+save Exam1_output.all

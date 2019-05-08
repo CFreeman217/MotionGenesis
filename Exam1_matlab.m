@@ -1,6 +1,6 @@
 function [t,VAR,Output] = Exam1_matlab
 %===========================================================================
-% File: Exam1_matlab.m created May 07 2019 by MotionGenesis 5.9.
+% File: Exam1_matlab.m created May 08 2019 by MotionGenesis 5.9.
 % Portions copyright (c) 2009-2019 Motion Genesis LLC.  Rights reserved.
 % MotionGenesis Student Licensee: clayFreeman19. (until February 2022).
 % Paid-up MotionGenesis Student licensees are granted the right

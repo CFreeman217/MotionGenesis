@@ -41,4 +41,4 @@ B.AddTorque(A, -2*k*Q3*Ax>)
 zero = System.GetDynamicsKane()
 
 ODE(zero, U1', U3') Exam3_matlab.m 
-save Exam3_output.html
+save Exam3_output.all

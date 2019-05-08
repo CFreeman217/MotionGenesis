@@ -1,6 +1,6 @@
 function [t,VAR,Output] = Exam2_matlab
 %===========================================================================
-% File: Exam2_matlab.m created May 07 2019 by MotionGenesis 5.9.
+% File: Exam2_matlab.m created May 08 2019 by MotionGenesis 5.9.
 % Portions copyright (c) 2009-2019 Motion Genesis LLC.  Rights reserved.
 % MotionGenesis Student Licensee: clayFreeman19. (until February 2022).
 % Paid-up MotionGenesis Student licensees are granted the right
@@ -17,7 +17,6 @@ function [t,VAR,Output] = Exam2_matlab
 % % Kinematical Equations %%%
 % % Rotations %%%
 % % Translations %%%
-% % Velocities %%%
 % % Constraints %%%
 % % Forces %%%
 %===========================================================================
@@ -28,38 +27,39 @@ U2=0; Q1Dt=0; Q2Dt=0; Q3Dt=0; U1Dt=0; U3Dt=0;
 %-------------------------------+--------------------------+-------------------+-----------------
 % Quantity                      | Value                    | Units             | Description
 %-------------------------------|--------------------------|-------------------|-----------------
-g                               =  9.81;                   % UNITS               Constant
-IA                              =  0.12;                   % UNITS               Constant
-IC                              =  0.04;                   % UNITS               Constant
-L                               =  .8;                     % UNITS               Constant
-Ma                              =  0.5;                    % UNITS               Constant
-Mc                              =  0.3;                    % UNITS               Constant
-tB                              =  .1745;                  % UNITS               Constant
+g                               =  9.81;                   % m/s^2               Constant
+IA                              =  0.12;                   % kg*m^2              Constant
+IC                              =  0.04;                   % kg*m^2              Constant
+jB                              =  0.06;                   % kg*m^2              Constant
+L                               =  0.8;                    % m                   Constant
+Ma                              =  0.5;                    % kg                  Constant
+Mb                              =  1.0;                    % kg                  Constant
+Mc                              =  0.3;                    % kg                  Constant
+rB                              =  0.3;                    % m                   Constant
+tB                              =  0.1745;                 % rad                 Constant
 
-Q1                              =  .2618;                  % UNITS               Initial Value
-Q2                              =  .02;                    % UNITS               Initial Value
-Q3                              =  .2618;                  % UNITS               Initial Value
-U1                              =  .0873;                  % UNITS               Initial Value
-U3                              =  0;                      % UNITS               Initial Value
+Q1                              =  0.2618;                 % rad                 Initial Value
+Q2                              =  0.02;                   % m                   Initial Value
+Q3                              =  0.2618;                 % rad                 Initial Value
+U1                              =  0.0873;                 % rad/s               Initial Value
+U3                              =  0.0;                    % rad/s               Initial Value
 
 tInitial                        =  0.0;                    % second              Initial Time
-tFinal                          =  40;                     % second              Final Time
-tStep                           =  0.05;                   % second              Integration Step
+tFinal                          =  40.0;                   % second              Final Time
+tStep                           =  0.1;                    % second              Integration Step
 printIntScreen                  =  1;                      % 0 or +integer       0 is NO screen output
 printIntFile                    =  1;                      % 0 or +integer       0 is NO file   output
-absError                        =  1.0E-05;                %                     Absolute Error
+absError                        =  1.0E-07;                %                     Absolute Error
 relError                        =  1.0E-08;                %                     Relative Error
 %-------------------------------+--------------------------+-------------------+-----------------
 
-
-% Evaluate constants
-U2 = 0;
-Q2Dt = U2;
-
+% Unit conversions
+RADtoDEG = 180.0 / pi;
 
 VAR = SetMatrixFromNamedQuantities;
 [t,VAR,Output] = IntegrateForwardOrBackward( tInitial, tFinal, tStep, absError, relError, VAR, printIntScreen, printIntFile );
 OutputToScreenOrFile( [], 0, 0 );   % Close output files.
+PlotOutputFiles;
 
 
 %===========================================================================
@@ -67,15 +67,22 @@ function sys = mdlDerivatives( t, VAR, uSimulink )
 %===========================================================================
 SetNamedQuantitiesFromMatrix( VAR );
 Q1Dt = U1;
+U2 = rB*U3;
+Q2Dt = U2;
 Q3Dt = U3;
 
 COEF = zeros( 2, 2 );
-COEF(1,1) = IC + 0.5625*Mc;
-COEF(2,2) = IA + Ma*L^2 + IC*sin(Q1)^2 + 0.5625*Mc*(2.666666666666667*L+sin(Q1))^2;
+COEF(1,1) = IC + 0.5625*Mc*L^2;
+COEF(1,2) = -0.75*Mc*L*Q2*cos(Q1);
+COEF(2,1) = -0.75*Mc*L*Q2*cos(Q1);
+COEF(2,2) = IA + jB + Mb*Q2^2 + Ma*(L^2+2*L*rB+Q2^2) + 0.5625*Mc*(1.777777777777778*Q2^2+L^2*(2.666666666666667+sin(Q1))^2)  ...
++ rB*(Ma*rB+Mb*rB+Mc*(rB+1.5*L*(2.666666666666667+sin(Q1))));
 RHS = zeros( 1, 2 );
-RHS(1) = 0.5625*cos(Q1)*(1.333333333333333*Mc*g*cos(tB+Q3)+(1.777777777777778*IC*sin(Q1)+Mc*(2.666666666666667*L+sin(Q1)))*U3^2);
-RHS(2) = -0.75*g*sin(tB+Q3)*(1.333333333333333*Ma*L+Mc*(2.666666666666667*L+sin(Q1))) - 1.125*cos(Q1)*(1.777777777777778*IC*sin(Q1)+  ...
-Mc*(2.666666666666667*L+sin(Q1)))*U1*U3;
+RHS(1) = 0.5625*Mc*L*cos(Q1)*(1.333333333333333*g*cos(tB+Q3)+U3*(2.666666666666667*U2+2.666666666666667*L*U3+L*sin(Q1)*U3));
+RHS(2) = rB*U3*(Ma*Q2*U3+Mb*Q2*U3+Mc*(Q2*U3-1.5*L*cos(Q1)*U1)) - 0.75*g*(1.333333333333333*Mb*(rB*sin(tB+Q3)+Q2*cos(tB+Q3))+1.333333333333333*  ...
+Ma*(L*sin(tB+Q3)+rB*sin(tB+Q3)+Q2*cos(tB+Q3))+Mc*(1.333333333333333*rB*sin(tB+Q3)+1.333333333333333*Q2*cos(tB+Q3)+L*sin(tB+Q3)*(  ...
+2.666666666666667+sin(Q1)))) - 2*Ma*Q2*U2*U3 - 2*Mb*Q2*U2*U3 - 0.75*Mc*(2.666666666666667*Q2*U2*U3+L*Q2*sin(Q1)*U1^2+1.5*L^2*cos(  ...
+Q1)*(2.666666666666667+sin(Q1))*U1*U3);
 SolutionToAlgebraicEquations = COEF \ transpose(RHS);
 
 % Update variables after uncoupling equations
@@ -126,13 +133,11 @@ end
 %===========================================================================
 function Output = mdlOutputs( t, VAR, uSimulink )
 %===========================================================================
-Output = zeros( 1, 6 );
+Output = zeros( 1, 4 );
 Output(1) = t;
-Output(2) = Q1;
+Output(2) = Q1*RADtoDEG;
 Output(3) = Q2;
-Output(4) = Q3;
-Output(5) = U1;
-Output(6) = U3;
+Output(4) = Q3*RADtoDEG;
 end
 
 
@@ -145,11 +150,7 @@ if( isempty(Output) ),
    if( ~isempty(FileIdentifier) ),
       fclose( FileIdentifier(1) );
       clear FileIdentifier;
-      fprintf( 1, '\n Output is in the file Exam2_matlab.1\n' );
-      fprintf( 1, '\n Note: To automate plotting, issue the command OutputPlot in MotionGenesis.\n' );
-      fprintf( 1, '\n To load and plot columns 1 and 2 with a solid line and columns 1 and 3 with a dashed line, enter:\n' );
-      fprintf( 1, '    someName = load( ''Exam2_matlab.1'' );\n' );
-      fprintf( 1, '    plot( someName(:,1), someName(:,2), ''-'', someName(:,1), someName(:,3), ''--'' )\n\n' );
+      fprintf( 1, '\n Output is in the file Exam2_matlab.1\n\n' );
    end
    clear hasHeaderInformationBeenWritten;
    return;
@@ -157,20 +158,20 @@ end
 
 if( isempty(hasHeaderInformationBeenWritten) ),
    if( shouldPrintToScreen ),
-      fprintf( 1,                '%%       t             Q1             Q2             Q3             U1             U3\n' );
-      fprintf( 1,                '%%   (second)        (UNITS)        (UNITS)        (UNITS)        (UNITS)        (UNITS)\n\n' );
+      fprintf( 1,                '%%       t             Q1             Q2             Q3\n' );
+      fprintf( 1,                '%%     (sec)          (deg)           (m)           (deg)\n\n' );
    end
    if( shouldPrintToFile && isempty(FileIdentifier) ),
       FileIdentifier(1) = fopen('Exam2_matlab.1', 'wt');   if( FileIdentifier(1) == -1 ), error('Error: unable to open file Exam2_matlab.1'); end
       fprintf(FileIdentifier(1), '%% FILE: Exam2_matlab.1\n%%\n' );
-      fprintf(FileIdentifier(1), '%%       t             Q1             Q2             Q3             U1             U3\n' );
-      fprintf(FileIdentifier(1), '%%   (second)        (UNITS)        (UNITS)        (UNITS)        (UNITS)        (UNITS)\n\n' );
+      fprintf(FileIdentifier(1), '%%       t             Q1             Q2             Q3\n' );
+      fprintf(FileIdentifier(1), '%%     (sec)          (deg)           (m)           (deg)\n\n' );
    end
    hasHeaderInformationBeenWritten = 1;
 end
 
-if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:6) );  end
-if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:6) );  end
+if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:4) );  end
+if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:4) );  end
 end
 
 
@@ -184,6 +185,20 @@ if( numberOfOutputQuantities > 0 ),
    end
    fprintf( fileIdentifier, '\n' );
 end
+end
+
+
+
+%===========================================================================
+function PlotOutputFiles
+%===========================================================================
+if( printIntFile == 0 ),  return;  end
+figure;
+data = load( 'Exam2_matlab.1' ); 
+plot( data(:,1),data(:,2),'-b', data(:,1),data(:,3),'-.g', data(:,1),data(:,4),'--r', 'LineWidth',3 );
+legend( 'Q1 (deg)', 'Q2 (m)', 'Q3 (deg)' );
+xlabel('t (sec)');   % ylabel('Some y-axis label');   title('Some plot title');
+clear data;
 end
 
 

@@ -3,15 +3,19 @@
 
 NewtonianFrame N 
 RigidBody A, B, C
+RigidFrame D
 Point P(), Q()
 Constant L, rB, g, tB
 Variable Q{1:3}', U{1:3}'
 A.SetMass(Ma)
-A.SetInertia(Acm, 0, IA, IA)
+A.SetInertia(Acm, 0, 0, IA)
 B.SetMass(Mb)
-B.SetInertia(Bcm, Mb*rB^2/4*(Bx>*Bx> + By>*By> + 2*Bz>*Bz>))
+B.SetInertia(Bcm, 0, 0, jB)
+% B.SetInertia(Bcm, (0*Bx>*Bx> + 0*By>*By> + jB*Bz>*Bz>))
+% B.SetInertia(Bcm, (0*Nx>*Nx> + 0*Ny>*Ny> + jB*Nz>*Nz>))
+% B.SetInertia(Bcm, Mb*rB^2/4*(Bx>*Bx> + By>*By> + 2*Bz>*Bz>))
 C.SetMass(Mc)
-C.SetInertia(Ccm, IC, IC, 0)
+C.SetInertia(Ccm, 0, IC, 0)
 SetGeneralizedSpeed(U1, U2, U3)
 
 %%% Kinematical Equations %%%
@@ -21,20 +25,19 @@ Q3' = U3
 
 %%% Rotations %%%
 A.RotateZ(N, tB+Q3)
-B.RotateZ(N, tB)
+B.RotateZ(N, tB+Q3)
 C.Rotate(A, BodyY, -Q1)
+D.RotateZ(N, tB)
 
 %%% Translations %%%
-Bcm.Translate(No, Q2*By>)
-P.Translate(Bcm, rB*Bx>)
-Ao.Translate(Bcm, 0>)
-Acm.Translate(Bcm, L*Ax>)
-Q.Translate(Bcm, 2*L*Ax>)
-Co.Translate(Q, -1.5*Cz>)
-Ccm.Translate(Q, -0.75*Cz>)
-
-%%% Velocities %%%
-P.SetVelocity(N, Bcm, B)
+Ao.Translate(No, Q2*By>)
+Do.Translate(Ao, 0>)
+Bcm.Translate(Ao, 0>)
+Acm.Translate(Ao, L*Ax>)
+Q.Translate(Ao, 2*L*Ax>)
+Co.Translate(Q, -1.5*L*Cz>)
+Ccm.Translate(Q, -0.75*L*Cz>)
+P.Translate(Do, -rB*Bx>)
 
 %%% Constraints %%%
 Dependent[1] = dot(V_P_N>, By>)
@@ -44,6 +47,14 @@ Constrain(Dependent[U2])
 System.AddForceGravity(g*Nx>)
 
 zero = System.GetDynamicsKane()
+Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+Input tB = 0.1745 rad, g = 9.81 m/s^2, rB = 0.3 m 
+Input Mb = 1.0 kg, jB = 0.06 kg*m^2, L = 0.8 m 
+Input Ma = 0.5 kg, IA = 0.12 kg*m^2, Mc = 0.3 kg
+Input IC = 0.04 kg*m^2, Q1 = 0.2618 rad, Q2 = 0.02 m 
+Input Q3 = 0.2618 rad, U1 = 0.0873 rad/s
+Input U3 = 0.0 rad/s
 
+OutputPlot t sec, Q1 deg, Q2 m, Q3 deg
 ODE(zero, U1', U3') Exam2_matlab.m
-save Exam2_output.html
+save Exam2_output.all
