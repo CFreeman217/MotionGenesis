@@ -107,6 +107,7 @@ for filename in os.listdir('.'):
                 plt.xlabel('Time (s)')
                 plt.ylabel('Angle ($^\circ$)')
                 plt.title('Problem 2 Figure 1: Bar Angles')
+                plt.legend()
                 plt.savefig(filename[:-4]+'_figure1.png', bbox_inches='tight')
                 plt.show()
                 plt.plot(time, U1, label = 'Q1 Angle')
@@ -114,6 +115,7 @@ for filename in os.listdir('.'):
                 plt.xlabel('Time (s)')
                 plt.ylabel('Angular Velocity (rad/s)')
                 plt.title('Problem 2 Figure 2: Bar Angular Velocity')
+                plt.legend()
                 plt.savefig(filename[:-4]+'_figure2.png', bbox_inches='tight')
                 plt.show()
 
