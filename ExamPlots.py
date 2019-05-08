@@ -38,7 +38,7 @@ for filename in os.listdir('.'):
                 plt.ylabel('Angle (degrees)')
                 plt.legend()
                 plt.title('Restrained Double Pendulum')
-                # plt.savefig(filename[:-4]+'_figure.png', bbox_inches='tight')
+                plt.savefig(filename[:-4]+'_figure.png', bbox_inches='tight')
                 plt.show()
                 turMag = 50
                 sideA = 1.5
@@ -105,7 +105,7 @@ for filename in os.listdir('.'):
                 plt.plot(time, Q1, label = 'Q1 Angle')
                 plt.plot(time, Q3, label = 'Q3 Angle')
                 plt.xlabel('Time (s)')
-                plt.ylabel('Angle ($^\circS)')
+                plt.ylabel('Angle ($^\circ$)')
                 plt.title('Problem 2 Figure 1: Bar Angles')
                 plt.savefig(filename[:-4]+'_figure1.png', bbox_inches='tight')
                 plt.show()
