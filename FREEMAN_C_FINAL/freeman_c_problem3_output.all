@@ -1,0 +1,76 @@
+   (1) % ME 493: Intermediate Dynamics
+   (2) % Final Exam Problem 3
+   (3) NewtonianFrame N 
+   (4) RigidBody A, B 
+   (5) Constant rA, rB, g, k
+   (6) Point P()
+   (7) Variable Q{1:3}', U{1:3}' 
+   (8) A.SetMass(mA)
+   (9) B.SetMass(mB)
+   (10) A.SetInertia(Acm, IA, 0, 0)
+   (11) B.SetInertia(Bcm, IB, 0, 0)
+   (12) % A.SetInertia(Acm, mA*rA^2*(Ax>*Ax>))
+   (13) % B.SetInertia(Bcm, mB*rB^2/4*(2*Bx>*Bx> + By>*By> + Bz>*Bz>))
+   (14) SetGeneralizedSpeed(U1, U2, U3)
+   (15) %%% Kinematical Equations %%%
+   (16) Q1' = U1
+-> (17) Q1' = U1
+
+   (18) Q2' = U2
+-> (19) Q2' = U2
+
+   (20) Q3' = U3
+-> (21) Q3' = U3
+
+   (22) %%% Rotations %%%
+   (23) A.RotateX(N, Q1)
+-> (24) A_N = [1, 0, 0;  0, cos(Q1), sin(Q1);  0, -sin(Q1), cos(Q1)]
+-> (25) w_A_N> = U1*Ax>
+-> (26) alf_A_N> = U1'*Ax>
+
+   (27) B.RotateX(A, -Q3)
+-> (28) B_A = [1, 0, 0;  0, cos(Q3), -sin(Q3);  0, sin(Q3), cos(Q3)]
+-> (29) w_B_A> = -U3*Bx>
+-> (30) w_B_N> = (U1-U3)*Bx>
+-> (31) alf_B_A> = -U3'*Bx>
+-> (32) alf_B_N> = (U1'-U3')*Bx>
+
+   (33) %%% Translations %%%
+   (34) P.SetPosition(Acm, -rA*Nz>)
+-> (35) p_Acm_P> = -rA*Nz>
+
+   (36) Bcm.SetPosition(Acm, -rB*Az>)
+-> (37) p_Acm_Bcm> = -rB*Az>
+
+   (38) %%% Velocities %%%
+   (39) P.SetVelocity(N, U2*Ny>)
+-> (40) v_P_N> = U2*Ny>
+
+   (41) Acm.SetVelocityAcceleration(N, 0>)
+-> (42) v_Acm_N> = 0>
+-> (43) a_Acm_N> = 0>
+
+   (44) Bcm.SetVelocityAcceleration(N, 0>)
+-> (45) v_Bcm_N> = 0>
+-> (46) a_Bcm_N> = 0>
+
+   (47) %%% Constraints %%%
+   (48) Dependent[1] = dot(v_P_N>, Ny>)
+-> (49) Dependent[1] = U2
+
+   (50) Constrain(Dependent[U2])
+-> (51) U2 = 0
+-> (52) U2' = 0
+
+   (53) %%% Forces %%%
+   (54) System.AddForceGravity( -g*Nz> )
+-> (55) Force_Acm> = -mA*g*Nz>
+-> (56) Force_Bcm> = -mB*g*Nz>
+
+   (57) B.AddTorque(A, -2*k*Q3*Ax>)
+-> (58) Torque_B_A> = -2*k*Q3*Ax>
+
+   (59) zero = System.GetDynamicsKane()
+-> (60) zero = [(IA+IB)*U1' - IB*U3';  IB*U3' - 2*k*Q3 - IB*U1']
+
+   (61) % ODE(zero, U1', U3') Exam3_matlab.m 
