@@ -1,0 +1,59 @@
+   (1) % MotionGenesis file:  MGSpinStability3DRigidBodyWithBodyXYZAngles.txt
+   (2) % Copyright (c) 2009 Motion Genesis LLC.  All rights reserved.
+   (3) %------------------------------------------------------------
+   (4) NewtonianFrame  N
+   (5) RigidBody       B
+   (6) %-------------------------------------------------------------------
+   (7) Variable   q1',  q2',  q3'         % Rotation angles.
+   (8) Variable   wx',  wy',  wz'         % Angular velocity measures.
+   (9) B.SetInertia( Bcm,  Ixx = 1 kg*m^2,  Iyy = 2 kg*m^2,  Izz = 3 kg*m^2 )
+   (10) %-------------------------------------------------------------------
+   (11) %       Rotational kinematics and kinematical ODEs.
+   (12) B.SetAngularVelocityAcceleration( N,  wx*Bx> + wy*By> + wz*Bz> )
+-> (13) w_B_N> = wx*Bx> + wy*By> + wz*Bz>
+-> (14) alf_B_N> = wx'*Bx> + wy'*By> + wz'*Bz>
+
+   (15) B.SetRotationMatrixODE( N, BodyXYZ, q1, q2, q3 )
+-> (16) B_N[1,1] = cos(q2)*cos(q3)
+-> (17) B_N[1,2] = sin(q3)*cos(q1) + sin(q1)*sin(q2)*cos(q3)
+-> (18) B_N[1,3] = sin(q1)*sin(q3) - sin(q2)*cos(q1)*cos(q3)
+-> (19) B_N[2,1] = -sin(q3)*cos(q2)
+-> (20) B_N[2,2] = cos(q1)*cos(q3) - sin(q1)*sin(q2)*sin(q3)
+-> (21) B_N[2,3] = sin(q1)*cos(q3) + sin(q2)*sin(q3)*cos(q1)
+-> (22) B_N[3,1] = sin(q2)
+-> (23) B_N[3,2] = -sin(q1)*cos(q2)
+-> (24) B_N[3,3] = cos(q1)*cos(q2)
+-> (25) q1' = (wx*cos(q3)-wy*sin(q3))/cos(q2)
+-> (26) q2' = wx*sin(q3) + wy*cos(q3)
+-> (27) q3' = wz - tan(q2)*(wx*cos(q3)-wy*sin(q3))
+
+   (28) %-------------------------------------------------------------------
+   (29) %       Form equations of motion (angular momentum principle).
+   (30) Dynamics[1] = Dot(  Bx>,  B.GetDynamics(Bcm)  )
+-> (31) Dynamics[1] = Ixx*wx' - (Iyy-Izz)*wy*wz
+
+   (32) Dynamics[2] = Dot(  By>,  B.GetDynamics(Bcm)  )
+-> (33) Dynamics[2] = (Ixx-Izz)*wx*wz + Iyy*wy'
+
+   (34) Dynamics[3] = Dot(  Bz>,  B.GetDynamics(Bcm)  )
+-> (35) Dynamics[3] = Izz*wz' - (Ixx-Iyy)*wx*wy
+
+   (36) zero = Solve( Dynamics = 0,   wx',  wy',  wz'  )
+-> (37) zero[1] = (Iyy-Izz)*wy*wz/Ixx
+-> (38) zero[2] = -(Ixx-Izz)*wx*wz/Iyy
+-> (39) zero[3] = (Ixx-Iyy)*wx*wy/Izz
+
+   (40) %-----------------------------------------------------------
+   (41) %       Numerical integration parameters and initial values.
+   (42) Input  tFinal = 8 sec,  tStep = 0.01 sec, absError = 1.0E-7
+   (43) Input  q1 = 0 degrees,  q2 = 0 degrees,  q3 = 0 degrees
+   (44) Input  wx = 0.2 rad/sec,  wy = 7.0 rad/sec,  wz = 0.2 rad/sec
+   (45) %------------------------------------------------------------
+   (46) %       List output quantities and solve ODEs.
+   (47) theta = GetAngleBetweenUnitVectors( Ny>,  By> )
+-> (48) theta = acos(cos(q1)*cos(q3)-sin(q1)*sin(q2)*sin(q3))
+
+   (49) OutputPlot  t sec,  theta degrees
+   (50) ODE() MGSpinStability3DRigidBodyWithBodyXYZAngles.m
+
+   (51) %------------------------------------------------------------
