@@ -31,8 +31,8 @@ r                               =  0.00381;                % m                  
 rho                             =  1.2;                    % kg/m^3              Constant
 
 Q1                              =  0.0;                    % UNITS               Initial Value
-Q2                              =  30;                     % deg                 Initial Value
-U1                              =  400;                    % UNITS               Initial Value
+Q2                              =  15;                     % UNITS               Initial Value
+U1                              =  120;                    % UNITS               Initial Value
 U2                              =  0;                      % UNITS               Initial Value
 
 tInitial                        =  0.0;                    % second              Initial Time
@@ -45,8 +45,7 @@ relError                        =  1.0E-08;                %                    
 %-------------------------------+--------------------------+-------------------+-----------------
 
 % Unit conversions
-DEGtoRAD = pi / 180.0;
-Q2 = Q2 * 0.0174532925199433;
+RADtoDEG = 180.0 / pi;
 
 % Evaluate constants
 areaSection = pi*r^2;
@@ -117,9 +116,10 @@ end
 %===========================================================================
 function Output = mdlOutputs( t, VAR, uSimulink )
 %===========================================================================
-Output = zeros( 1, 2 );
+Output = zeros( 1, 3 );
 Output(1) = t;
 Output(2) = Q1;
+Output(3) = Q2*RADtoDEG;
 end
 
 
@@ -140,20 +140,20 @@ end
 
 if( isempty(hasHeaderInformationBeenWritten) ),
    if( shouldPrintToScreen ),
-      fprintf( 1,                '%%       t             Q1\n' );
-      fprintf( 1,                '%%     (sec)           (m)\n\n' );
+      fprintf( 1,                '%%       t             Q1             Q2\n' );
+      fprintf( 1,                '%%     (sec)           (m)           (deg)\n\n' );
    end
    if( shouldPrintToFile && isempty(FileIdentifier) ),
       FileIdentifier(1) = fopen('bulletSim1.1', 'wt');   if( FileIdentifier(1) == -1 ), error('Error: unable to open file bulletSim1.1'); end
       fprintf(FileIdentifier(1), '%% FILE: bulletSim1.1\n%%\n' );
-      fprintf(FileIdentifier(1), '%%       t             Q1\n' );
-      fprintf(FileIdentifier(1), '%%     (sec)           (m)\n\n' );
+      fprintf(FileIdentifier(1), '%%       t             Q1             Q2\n' );
+      fprintf(FileIdentifier(1), '%%     (sec)           (m)           (deg)\n\n' );
    end
    hasHeaderInformationBeenWritten = 1;
 end
 
-if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:2) );  end
-if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:2) );  end
+if( shouldPrintToScreen ), WriteNumericalData( 1,                 Output(1:3) );  end
+if( shouldPrintToFile ),   WriteNumericalData( FileIdentifier(1), Output(1:3) );  end
 end
 
 
@@ -177,9 +177,9 @@ function PlotOutputFiles
 if( printIntFile == 0 ),  return;  end
 figure;
 data = load( 'bulletSim1.1' ); 
-plot( data(:,1),data(:,2),'-b', 'LineWidth',3 );
-legend( 'Q1 (m)' );
-xlabel('t (sec)');   ylabel('Q1 (m)');   % title('Some plot title');
+plot( data(:,1),data(:,2),'-b', data(:,1),data(:,3),'-.g', 'LineWidth',3 );
+legend( 'Q1 (m)', 'Q2 (deg)' );
+xlabel('t (sec)');   % ylabel('Some y-axis label');   title('Some plot title');
 clear data;
 end
 

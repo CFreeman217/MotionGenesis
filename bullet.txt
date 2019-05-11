@@ -75,5 +75,5 @@ zero = System.GetDynamicsKane()
 
 Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
 
-OutputPlot t sec, Q1 m
+OutputPlot t sec, Q1 m, Q2 deg
 ODE(zero, U1', U2') bulletSim1.m
