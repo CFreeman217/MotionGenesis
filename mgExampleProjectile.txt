@@ -1,0 +1,41 @@
+
+% MotionGenesis file:  MGProjectileMotionFma.txt
+% Copyright (c) 2009 Motion Genesis LLC.  All rights reserved.
+%------------------------------------------------------
+NewtonianFrame  N                 % Earth (baseball park).
+Particle        Q                 % Baseball.
+%---------------------------------------------------
+Variable   x'',  y''              % Ball's horizontal and vertical measures.
+Constant   g = 9.8 m/s^2          % Earth's gravitational acceleration.
+Constant   b = 0.05 N*s/m         % Coefficient for air-resistance.
+Q.SetMass( m = 145 grams )
+%---------------------------------------------------
+%      Translational kinematics (position, velocity, acceleration).
+Q.Translate( No,  x*Nx> + y*Ny> )
+
+%---------------------------------------------------
+%      Add relevant forces (aerodynamic and gravity).
+Q.AddForce(  -m * g * Ny>  )
+
+
+Q.AddForce(  -b * Q.GetVelocity(N)  )
+
+
+%---------------------------------------------------
+%      Form equations of motion with F = m*a.  Solve for x'', y''.
+DynamicEqn[1] = Dot( Nx>,  Q.GetDynamics() )
+DynamicEqn[2] = Dot( Ny>,  Q.GetDynamics() )
+
+Solve( DynamicEqn = 0,   x'',  y''  )
+
+%--------------------------------------------------------------------
+%      Input integration parameters and initial values.
+Input  tFinal = 3.8 sec,  tStep = 0.1 sec,  absError = 1.0E-7
+Input  x = 0 m,  x' = 44.7 * cosDegrees(30) m/s
+Input  y = 0 m,  y' = 44.7 * sinDegrees(30) m/s
+%--------------------------------------------------------------------
+%       List output quantities and solve ODEs.
+OutputPlot  x m,  y m
+ODE()  MGProjectileMotionFma
+
+%---------------------------------------------------

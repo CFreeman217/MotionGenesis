@@ -1,0 +1,79 @@
+% ME493 Intermediate Dynamics
+% Final Project: Bullet Dynamics
+
+%%% Environment %%%
+NewtonianFrame N % Earth Perspective
+Constant g = 9.81 m/s^2 % Gravity
+Constant rho = 1.2 kg/m^3 % Density of air at sea level
+Constant coeffDrag = 0.5 noUnits % Drag Coefficient
+
+%%% Projectile %%%
+RigidBody B % Bullet with positive x axis running from the origin at the base through the tip
+RigidFrame V(B) % Trajectory of the bullet attached to the bullet body
+
+% M80 FMJ Ball
+Constant r = 0.00381 m % Bullet radius (7.62x51 mm NATO) 0.3085in
+Constant ogiveLength = 0.0194818 m % 0.767in
+Constant ogiveRadius = 0.0762 m % 3.00in
+Constant meplatDiameter = 0.001524 m % 0.060in
+Constant boatTailLength = 0.004445 m %.175in
+
+Constant boatTailAngle = 9.0 * ConvertUnits(deg, rad)
+Constant oal = 0.028956 m % 1.140in
+Constant bulletMass = 0.00952544 kg % 9.52544g = 147gr
+
+% Assume homogenous density and approximate mass distribution with cones and cylinders
+Constant areaSection = pi*r^2
+Constant BaseRadius = r - boatTailLength/tan(boatTailAngle)
+Constant volumeBaseConeSmall = pi*baseRadius^3*tan(boatTailAngle)/3
+Constant volumeBaseConeBig = pi*r^3*tan(boatTailAngle)/3
+Constant volumeOgive = pi*r^2*ogiveLength/3
+Constant volumeBoatTail = (pi*tan(boatTailAngle)/3)*(r^3 - baseRadius^3)
+Constant volumeBearing = pi*r^2*(oal - boatTailLength - ogiveLength)
+Constant volumeTotal = volumeOgive + volumeBoatTail + volumeBearing
+Constant density = bulletMass/volumeTotal
+Constant massOgive = volumeOgive * density
+Constant massBoatTail = volumeBoatTail * density
+Constant massBearing = volumeBearing * density
+Constant massBaseConeSmall = volumeBaseConeSmall*density
+Constant massBaseConeBig = volumeBaseConeBig*density
+Constant IogiveInline = 3*massOgive*r^2/10
+Constant IbtConeSmallInline = 3*massBaseConeSmall*baseRadius^2/10
+Constant IbtConeBigInline = 3*massBaseConeBig*r^2/10
+Constant IboatTailInline = IbtConeBigInline - IbtConeSmallInline
+Constant IbearingInline = massBearing*r^2/2
+Constant Inertia_Inline = IogiveInline + IboatTailInline + IbearingInline
+Constant IbearingOffAxis = massBearing*(r^2/4 + ((oal - ogiveLength - boatTailLength)^2)/12)
+Constant IbtConeSmallOffAxis = massBaseConeSmall*((baseRadius*tan(boatTailAngle))^2/10 + 3*baseRadius^2/20)
+Constant IbtConeBigOffAxis = massBaseConeBig*((r*tan(boatTailAngle))^2/10 + 3*r^2/20)
+Constant InertiaBoatTailOffAxis = IbtConeBigOffAxis - IbtConeSmallOffAxis
+Constant InertiaOgiveOffAxis = massOgive*(ogiveLength^2/10 + 3*r^2/20)
+Constant Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis
+
+B.SetMass(bulletMass)
+B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
+
+% Let Q1 = Position
+% Let Q2 = Angle with ground
+% Let Q3 = Rotation (spin)
+
+% Variable Q1', Q2', Q3', U1', U2', U3'
+Variable Q1', Q2', U1', U2'
+
+SetGeneralizedSpeed(U1, U2)
+Q1' = U1
+Q2' = U2
+% Q3' = U3
+
+B.RotateZ(N, Q2)
+Bcm.SetVelocity(N, U1*Bx>)
+
+DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
+Bcm.AddForce(DragForce> - bulletMass*g*Ny>)
+
+zero = System.GetDynamicsKane()
+
+Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+
+OutputPlot t sec, Q1 m
+ODE(zero, U1', U2') bulletSim1.m
