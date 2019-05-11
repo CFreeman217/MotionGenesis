@@ -16,7 +16,7 @@ B.SetRotationMatrixODE( N, BodyXYZ, q1, q2, q3 )
 Dynamics[1] = Dot(  Bx>,  B.GetDynamics(Bcm)  )
 Dynamics[2] = Dot(  By>,  B.GetDynamics(Bcm)  )
 Dynamics[3] = Dot(  Bz>,  B.GetDynamics(Bcm)  )
-zero = Solve( Dynamics = 0,   wx',  wy',  wz'  )
+Solve( Dynamics = 0,   wx',  wy',  wz'  )
 %-----------------------------------------------------------
 %       Numerical integration parameters and initial values.
 Input  tFinal = 8 sec,  tStep = 0.01 sec, absError = 1.0E-7

@@ -38,10 +38,10 @@
    (34) Dynamics[3] = Dot(  Bz>,  B.GetDynamics(Bcm)  )
 -> (35) Dynamics[3] = Izz*wz' - (Ixx-Iyy)*wx*wy
 
-   (36) zero = Solve( Dynamics = 0,   wx',  wy',  wz'  )
--> (37) zero[1] = (Iyy-Izz)*wy*wz/Ixx
--> (38) zero[2] = -(Ixx-Izz)*wx*wz/Iyy
--> (39) zero[3] = (Ixx-Iyy)*wx*wy/Izz
+   (36) Solve( Dynamics = 0,   wx',  wy',  wz'  )
+-> (37) wx' = (Iyy-Izz)*wy*wz/Ixx
+-> (38) wy' = -(Ixx-Izz)*wx*wz/Iyy
+-> (39) wz' = (Ixx-Iyy)*wx*wy/Izz
 
    (40) %-----------------------------------------------------------
    (41) %       Numerical integration parameters and initial values.

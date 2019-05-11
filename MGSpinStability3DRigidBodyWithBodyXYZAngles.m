@@ -15,16 +15,22 @@ function [t,VAR,Output] = MGSpinStability3DRigidBodyWithBodyXYZAngles
 % in connection with the software or the use or other dealings in the software. 
 %===========================================================================
 eventDetectedByIntegratorTerminate1OrContinue0 = [];
-wx=0; wy=0; wz=0;
-q1Dt=0; q2Dt=0; q3Dt=0; theta=0;
+q1Dt=0; q2Dt=0; q3Dt=0; wxDt=0; wyDt=0; wzDt=0; theta=0;
 
 
 %-------------------------------+--------------------------+-------------------+-----------------
 % Quantity                      | Value                    | Units             | Description
 %-------------------------------|--------------------------|-------------------|-----------------
+Ixx                             =  1;                      % kg*m^2              Constant
+Iyy                             =  2;                      % kg*m^2              Constant
+Izz                             =  3;                      % kg*m^2              Constant
+
 q1                              =  0;                      % degrees             Initial Value
 q2                              =  0;                      % degrees             Initial Value
 q3                              =  0;                      % degrees             Initial Value
+wx                              =  0.2;                    % rad/sec             Initial Value
+wy                              =  7.0;                    % rad/sec             Initial Value
+wz                              =  0.2;                    % rad/sec             Initial Value
 
 tInitial                        =  0.0;                    % second              Initial Time
 tFinal                          =  8;                      % sec                 Final Time
@@ -52,15 +58,12 @@ PlotOutputFiles;
 function sys = mdlDerivatives( t, VAR, uSimulink )
 %===========================================================================
 SetNamedQuantitiesFromMatrix( VAR );
-
-% Quantities to be specified (not assigned in MotionGenesis).
-wx = 0;
-wy = 0;
-wz = 0;
-
 q1Dt = (wx*cos(q3)-wy*sin(q3))/cos(q2);
 q2Dt = wx*sin(q3) + wy*cos(q3);
 q3Dt = wz - tan(q2)*(wx*cos(q3)-wy*sin(q3));
+wxDt = (Iyy-Izz)*wy*wz/Ixx;
+wyDt = -(Ixx-Izz)*wx*wz/Iyy;
+wzDt = (Ixx-Iyy)*wx*wy/Izz;
 
 sys = transpose( SetMatrixOfDerivativesPriorToIntegrationStep );
 end
@@ -70,10 +73,13 @@ end
 %===========================================================================
 function VAR = SetMatrixFromNamedQuantities
 %===========================================================================
-VAR = zeros( 1, 3 );
+VAR = zeros( 1, 6 );
 VAR(1) = q1;
 VAR(2) = q2;
 VAR(3) = q3;
+VAR(4) = wx;
+VAR(5) = wy;
+VAR(6) = wz;
 end
 
 
@@ -83,16 +89,22 @@ function SetNamedQuantitiesFromMatrix( VAR )
 q1 = VAR(1);
 q2 = VAR(2);
 q3 = VAR(3);
+wx = VAR(4);
+wy = VAR(5);
+wz = VAR(6);
 end
 
 
 %===========================================================================
 function VARp = SetMatrixOfDerivativesPriorToIntegrationStep
 %===========================================================================
-VARp = zeros( 1, 3 );
+VARp = zeros( 1, 6 );
 VARp(1) = q1Dt;
 VARp(2) = q2Dt;
 VARp(3) = q3Dt;
+VARp(4) = wxDt;
+VARp(5) = wyDt;
+VARp(6) = wzDt;
 end
 
 
