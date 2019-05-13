@@ -1,0 +1,158 @@
+<HTML><HEAD><TITLE>MotionGenesis: projTrivialCase.html</TITLE></HEAD><BODY bgcolor="#FFFFFF">
+<DIV Style="Margin-Left:4px; Margin-Top:8px">
+<nobr><font color="darkBlue"><b><font size=+1>projTrivialCase.html</font> &nbsp;<font size=-1>(MotionGenesis input/output)</font></b>.</font></nobr>
+<PRE>
+   (1) % ME493 Intermediate Dynamics
+   (2) % Final Project: Bullet Dynamics
+   (3) %%% Environment %%%
+   (4) NewtonianFrame N % Earth Perspective
+   (5) Constant g = 9.81 m/s^2 % Gravity
+   (6) Constant rho = 1.2 kg/m^3 % Density of air at sea level
+   (7) Constant coeffDrag = 0.5 noUnits % Drag Coefficient
+   (8) %%% Projectile %%%
+   (9) RigidBody B % Bullet with positive x axis running from the origin at the base through the tip
+   (10) RigidFrame V(B) % Trajectory of the bullet attached to the bullet body
+   (11) % M80 FMJ Ball
+   (12) Constant r = 0.00381 m % Bullet radius (7.62x51 mm NATO) 0.3085in
+   (13) Constant ogiveLength = 0.0194818 m % 0.767in
+   (14) Constant ogiveRadius = 0.0762 m % 3.00in
+   (15) Constant meplatDiameter = 0.001524 m % 0.060in
+   (16) Constant boatTailLength = 0.004445 m %.175in
+   (17) Constant boatTailAngle = 9.0 * ConvertUnits(deg, rad)
+-> (18) boatTailAngle = 0.1570796
+
+   (19) Constant oal = 0.028956 m % 1.140in
+   (20) Constant bulletMass = 0.00952544 kg % 9.52544g = 147gr
+   (21) % Assume homogenous density and approximate mass distribution with cones and cylinders
+   (22) Constant areaSection = pi*r^2
+-> (23) areaSection = 3.141593*r^2
+
+   (24) Constant BaseRadius = r - boatTailLength/tan(boatTailAngle)
+-> (25) BaseRadius = r - boatTailLength/tan(boatTailAngle)
+
+   (26) Constant volumeBaseConeSmall = pi*baseRadius^3*tan(boatTailAngle)/3
+-> (27) volumeBaseConeSmall = 1.047198*BaseRadius^3*tan(boatTailAngle)
+
+   (28) Constant volumeBaseConeBig = pi*r^3*tan(boatTailAngle)/3
+-> (29) volumeBaseConeBig = 1.047198*r^3*tan(boatTailAngle)
+
+   (30) Constant volumeOgive = pi*r^2*ogiveLength/3
+-> (31) volumeOgive = 1.047198*ogiveLength*r^2
+
+   (32) Constant volumeBoatTail = (pi*tan(boatTailAngle)/3)*(r^3 - baseRadius^3)
+-> (33) volumeBoatTail = -1.047198*tan(boatTailAngle)*(BaseRadius^3-r^3)
+
+   (34) Constant volumeBearing = pi*r^2*(oal - boatTailLength - ogiveLength)
+-> (35) volumeBearing = 3.141593*r^2*(oal-boatTailLength-ogiveLength)
+
+   (36) Constant volumeTotal = volumeOgive + volumeBoatTail + volumeBearing
+-> (37) volumeTotal = volumeBearing + volumeBoatTail + volumeOgive
+
+   (38) Constant density = bulletMass/volumeTotal
+-> (39) density = bulletMass/volumeTotal
+
+   (40) Constant massOgive = volumeOgive * density
+-> (41) massOgive = density*volumeOgive
+
+   (42) Constant massBoatTail = volumeBoatTail * density
+-> (43) massBoatTail = density*volumeBoatTail
+
+   (44) Constant massBearing = volumeBearing * density
+-> (45) massBearing = density*volumeBearing
+
+   (46) Constant massBaseConeSmall = volumeBaseConeSmall*density
+-> (47) massBaseConeSmall = density*volumeBaseConeSmall
+
+   (48) Constant massBaseConeBig = volumeBaseConeBig*density
+-> (49) massBaseConeBig = density*volumeBaseConeBig
+
+   (50) Constant IogiveInline = 3*massOgive*r^2/10
+-> (51) IogiveInline = 0.3*massOgive*r^2
+
+   (52) Constant IbtConeSmallInline = 3*massBaseConeSmall*baseRadius^2/10
+-> (53) IbtConeSmallInline = 0.3*massBaseConeSmall*BaseRadius^2
+
+   (54) Constant IbtConeBigInline = 3*massBaseConeBig*r^2/10
+-> (55) IbtConeBigInline = 0.3*massBaseConeBig*r^2
+
+   (56) Constant IboatTailInline = IbtConeBigInline - IbtConeSmallInline
+-> (57) IboatTailInline = IbtConeBigInline - IbtConeSmallInline
+
+   (58) Constant IbearingInline = massBearing*r^2/2
+-> (59) IbearingInline = 0.5*massBearing*r^2
+
+   (60) Constant Inertia_Inline = IogiveInline + IboatTailInline + IbearingInline
+-> (61) Inertia_Inline = IbearingInline + IboatTailInline + IogiveInline
+
+   (62) Constant IbearingOffAxis = massBearing*(r^2/4 + ((oal - ogiveLength - boatTailLength)^2)/12)
+-> (63) IbearingOffAxis = 0.08333333*massBearing*(3*r^2+(oal-boatTailLength-og
+        iveLength)^2)
+
+   (64) Constant IbtConeSmallOffAxis = massBaseConeSmall*((baseRadius*tan(boatTailAngle))^2/10 + 3*baseRadius^2/20)
+-> (65) IbtConeSmallOffAxis = 0.1*massBaseConeSmall*BaseRadius^2*(1.5+tan(boat
+        TailAngle)^2)
+
+   (66) Constant IbtConeBigOffAxis = massBaseConeBig*((r*tan(boatTailAngle))^2/10 + 3*r^2/20)
+-> (67) IbtConeBigOffAxis = 0.1*massBaseConeBig*r^2*(1.5+tan(boatTailAngle)^2)
+
+   (68) Constant InertiaBoatTailOffAxis = IbtConeBigOffAxis - IbtConeSmallOffAxis
+-> (69) InertiaBoatTailOffAxis = IbtConeBigOffAxis - IbtConeSmallOffAxis
+
+   (70) Constant InertiaOgiveOffAxis = massOgive*(ogiveLength^2/10 + 3*r^2/20)
+-> (71) InertiaOgiveOffAxis = 0.1*massOgive*(ogiveLength^2+1.5*r^2)
+
+   (72) Constant Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis
+-> (73) Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis
+
+   (74) B.SetMass(bulletMass)
+   (75) B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
+   (76) % Let Qx = Position X
+   (77) % Let Qy = Position Y
+   (78) % Let Qz = Position Z
+   (79) % Let Qp = Pitch
+   (80) % Let Qr = Roll
+   (81) % Let Qu = Yaw
+   (82) % Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
+   (83) Variable Qx', Qy', Ux', Uy'
+   (84) % SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
+   (85) SetGeneralizedSpeed(Ux, Uy)
+   (86) Qx' = Ux
+-> (87) Qx' = Ux
+
+   (88) Qy' = Uy
+-> (89) Qy' = Uy
+
+   (90) % Qz' = Uz
+   (91) % Qp' = Up
+   (92) % Qr' = Ur
+   (93) % Qu' = Uu
+   (94) Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
+-> (95) p_No_Bcm> = Qx*Nx> + Qy*Ny>
+-> (96) v_Bcm_N> = Ux*Nx> + Uy*Ny>
+-> (97) a_Bcm_N> = Ux'*Nx> + Uy'*Ny>
+
+   (98) B.SetAngularVelocity(N, 0>)
+-> (99) w_B_N> = 0>
+
+   (100) System.AddForceGravity( -g*Ny> )
+-> (101) Force_Bcm> = -bulletMass*g*Ny>
+
+   (102) Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N) )
+-> (103) Force_Bcm> = -coeffDrag*Ux*Nx> + (-bulletMass*g-coeffDrag*Uy)*Ny>
+
+   (104) % DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
+   (105) zero = System.GetDynamicsKane()
+-> (106) zero = [coeffDrag*Ux + bulletMass*Ux';  bulletMass*g + coeffDrag*Uy + bulletMass*Uy']
+
+   (107) Solve(zero = 0, Ux', Uy')
+-> (108) Ux' = -coeffDrag*Ux/bulletMass
+-> (109) Uy' = -g - coeffDrag*Uy/bulletMass
+
+   (110) Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+   (111) Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
+   (112) Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
+   (113) OutputPlot Qx m, Qy m
+   (114) ODE() bulletSim2.m
+
+</PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
+</DIV></BODY></HTML>
