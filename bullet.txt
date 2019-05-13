@@ -53,27 +53,40 @@ Constant Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgi
 B.SetMass(bulletMass)
 B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
 
-% Let Q1 = Position
-% Let Q2 = Angle with ground
-% Let Q3 = Rotation (spin)
+% Let Qx = Position X
+% Let Qy = Position Y
+% Let Qz = Position Z
+% Let Qp = Pitch
+% Let Qr = Roll
+% Let Qu = Yaw
 
-% Variable Q1', Q2', Q3', U1', U2', U3'
-Variable Q1', Q2', U1', U2'
+% Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
+Variable Qx', Qy', Ux', Uy'
+% SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
+SetGeneralizedSpeed(Ux, Uy)
+Qx' = Ux
+Qy' = Uy
+% Qz' = Uz
+% Qp' = Up
+% Qr' = Ur
+% Qu' = Uu
 
-SetGeneralizedSpeed(U1, U2)
-Q1' = U1
-Q2' = U2
-% Q3' = U3
+Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
+B.SetAngularVelocity(N, 0>)
+System.AddForceGravity( -g*Ny> )
+Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N) )
 
-B.RotateZ(N, Q2)
-Bcm.SetVelocity(N, U1*Bx>)
-
-DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
-Bcm.AddForce(DragForce> - bulletMass*g*Ny>)
+% DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
 
 zero = System.GetDynamicsKane()
 
-Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+Solve(zero = 0, Ux', Uy')
 
-OutputPlot t sec, Q1 m, Q2 deg
-ODE(zero, U1', U2') bulletSim1.m
+Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
+Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
+
+OutputPlot Qx m, Qy m
+ODE() bulletSim2.m
+
+save projTrivialCase.html
