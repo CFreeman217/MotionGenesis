@@ -24,7 +24,7 @@ QxDt=0; QyDt=0; UxDt=0; UyDt=0;
 %-------------------------------+--------------------------+-------------------+-----------------
 % Quantity                      | Value                    | Units             | Description
 %-------------------------------|--------------------------|-------------------|-----------------
-bulletMass                      =  0.00952544;             % kg                  Constant
+bulletMass                      =  9.52544;                % g                   Constant
 coeffDrag                       =  0.5;                    % noUnits             Constant
 g                               =  9.81;                   % m/s^2               Constant
 
@@ -42,6 +42,8 @@ absError                        =  1.0E-07;                %                    
 relError                        =  1.0E-08;                %                     Relative Error
 %-------------------------------+--------------------------+-------------------+-----------------
 
+% Unit conversions.  UnitSystem: kilogram, meter, second.
+bulletMass = bulletMass * 0.001;                           %  Converted from g 
 
 VAR = SetMatrixFromNamedQuantities;
 [t,VAR,Output] = IntegrateForwardOrBackward( tInitial, tFinal, tStep, absError, relError, VAR, printIntScreen, printIntFile );

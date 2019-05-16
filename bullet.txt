@@ -18,9 +18,9 @@ Constant ogiveRadius = 0.0762 m % 3.00in
 Constant meplatDiameter = 0.001524 m % 0.060in
 Constant boatTailLength = 0.004445 m %.175in
 
-Constant boatTailAngle = 9.0 * ConvertUnits(deg, rad)
+Constant boatTailAngle = 9.0 deg
 Constant oal = 0.028956 m % 1.140in
-Constant bulletMass = 0.00952544 kg % 9.52544g = 147gr
+Constant bulletMass = 9.52544 g % 9.52544g = 147gr
 
 % Assume homogenous density and approximate mass distribution with cones and cylinders
 Constant areaSection = pi*r^2
