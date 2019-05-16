@@ -60,17 +60,19 @@ B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
 % Let Qr = Roll
 % Let Qu = Yaw
 
+
+
 % Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
 Variable Qx', Qy', Ux', Uy'
 % SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
 SetGeneralizedSpeed(Ux, Uy)
+
 Qx' = Ux
 Qy' = Uy
 % Qz' = Uz
 % Qp' = Up
 % Qr' = Ur
 % Qu' = Uu
-
 Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
 B.SetAngularVelocity(N, 0>)
 System.AddForceGravity( -g*Ny> )
@@ -87,6 +89,24 @@ Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s
 Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
 
 OutputPlot Qx m, Qy m
-ODE() bulletSim2.m
+OutputPlot t sec, (Ux^2 +Uy^2)^0.5 m/s
 
-save projTrivialCase.html
+% Variable Q1', Q2', U1', U2'
+% SetGeneralizedSpeed(U1, U2)
+% Q1' = U1
+% Q2' = U2
+
+% B.RotateZ(N, Q2)
+% Bcm.Translate(No, Q1*Bx>)
+% System.AddForceGravity( -g*Ny> )
+% Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
+% express(v_Bcm_N>, N)
+% zero = System.GetDynamicsKane()
+% Solve(zero = 0, U1', U2')
+% Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
+% Input Q1 = 0 m, U1 = 860 m/s
+% Input Q2 = 45 deg, U2 = 0 rad/s
+% OutputPlot Q1 m, Q2 deg
+ODE() bulletSim3.m
+
+save projTrivialCase3.html
