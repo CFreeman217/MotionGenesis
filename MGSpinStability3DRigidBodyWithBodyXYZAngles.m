@@ -1,6 +1,6 @@
 function [t,VAR,Output] = MGSpinStability3DRigidBodyWithBodyXYZAngles
 %===========================================================================
-% File: MGSpinStability3DRigidBodyWithBodyXYZAngles.m created May 10 2019 by MotionGenesis 5.9.
+% File: MGSpinStability3DRigidBodyWithBodyXYZAngles.m created May 16 2019 by MotionGenesis 5.9.
 % Portions copyright (c) 2009-2019 Motion Genesis LLC.  Rights reserved.
 % MotionGenesis Student Licensee: clayFreeman19. (until February 2022).
 % Paid-up MotionGenesis Student licensees are granted the right
@@ -21,9 +21,9 @@ q1Dt=0; q2Dt=0; q3Dt=0; wxDt=0; wyDt=0; wzDt=0; theta=0;
 %-------------------------------+--------------------------+-------------------+-----------------
 % Quantity                      | Value                    | Units             | Description
 %-------------------------------|--------------------------|-------------------|-----------------
-Ixx                             =  1;                      % kg*m^2              Constant
-Iyy                             =  2;                      % kg*m^2              Constant
-Izz                             =  3;                      % kg*m^2              Constant
+Ixx                             =  1.381e-6;               % kg*m^2              Constant
+Iyy                             =  7.405e-7;               % kg*m^2              Constant
+Izz                             =  7.405e-7;               % kg*m^2              Constant
 
 q1                              =  0;                      % degrees             Initial Value
 q2                              =  0;                      % degrees             Initial Value
