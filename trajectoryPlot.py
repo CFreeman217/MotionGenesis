@@ -1,8 +1,13 @@
 import numpy as np
 import matplotlib.pyplot as plt 
+import datetime, os
+
+g = 9.81 # Gravity
+rho = 1.2 # Density of air at sea level
+coeffDrag = 0.5 # Drag Coefficient
 
 initialVelocity = 10 # m/s
-initialAngle = 30 # degrees
+initialAngle = np.radians(30) # degrees
 time = 40 # s
 tstep = 0.01 # time step
 
@@ -17,7 +22,7 @@ barrelTwistRate = 12 # Inches/rotation
 
 boatTailAngle = np.radians(9.0) # deg
 oal = 0.028956 # m 1.140in
-bulletMass = 9.52544e-3 # kg 9.52544g = 147gr
+bulletMass = 9.52544 # kg 9.52544g = 147gr
 
 # Assume homogenous density and approximate mass distribution with cones and cylinders
 areaSection = np.pi*r**2
@@ -48,6 +53,33 @@ InertiaOgiveOffAxis = massOgive*(ogiveLength**2/10 + 3*r**2/20)
 Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis
 
 initialSpin = (12/barrelTwistRate)*(initialVelocity*(2*np.pi*3.28084))
+
+def get_filename(prefix, suffix, base_path):
+    '''
+    Gets a unique file name in the base path.
+    
+    Appends date and time information to file name and adds a number
+    if the file name is stil not unique.
+
+    prefix = Homework assignment name
+
+    suffix = Extension
+
+    base_path = Location of log file
+    '''
+    # Set base filename for compare
+    fileNameBase = base_path + prefix + "_" + datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    # Set base for numbering system if filename exists
+    num = 1
+    # Generate complete filename to check existence
+    fileName = fileNameBase + suffix
+    # Find a unique filename
+    while os.path.isfile(fileName):
+        # if the filename is not unique, add a number to the end of it
+        fileName = fileNameBase + "_" + str(num) + suffix
+        # increments the number in case the filename is still not unique
+        num = num + 1
+    return fileName
 
 
 def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
@@ -95,12 +127,12 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
         # Determine the estimated change in slope by comparing the output coefficients for each RK coefficient
         E = (c0 - d0)*k0 + (c2 - d2)*k2 + (c3 - d3)*k3 + (c4 - d4)*k4 + (c5 - d5)*k5 - d6*k6
         # Find the estimated error using a sum of squares method
-        e = math.sqrt(np.sum(E**2)/len(y))
+        e = np.sqrt(np.sum(E**2)/len(y))
         # we don't know if the new value i
         hNext = 0.9*st_sz*(tol/e)**0.2
         pcnt = (i/iter_lim)*100
         psolv = (x_n/x_f)*100
-        print('Correction limit : {:1.2f}% x-domain solved: {:1.2f}%'.format(pcnt, psolv))
+        print('Correction limit : {:1.2f}# x-domain solved: {:1.2f}#'.format(pcnt, psolv))
         # If approximated error is within tolerance, accept this integration step and move on
         if e <= tol:
             # Store the new result
@@ -135,82 +167,74 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
     return np.array(X), np.array(Y)
 
 
-def example_ode45py():
-    '''
-    Three linked bungee jumpers are depicted in figure P25.26.
-    If the bungee cords are adealized as linear springs,
-    the following equations based on force balances can be developed:
+def bulletSim():
 
-    m_1 * d2x/dt2 = m_1*g + k2*(x_2 - x_1) - k1*x_1
-    m_2 * d2x/dt2 = m_2*g + k3*(x_3 - x_2) - k2*(x_1 - x_2)
-    m_3 * d2x/dt2 = m_3*g + k3*(x_2 - x_3)
-
-    Where:
-    m_i = mass of jumper i (kg)
-    kj = spring for bungee cord j (N/m)
-    x_i = displacement of jumper i starting from the top of the fall and positive downward (m)
-    g = gravity = 9.81 m/s**2
-
-    Solve these equations for the positions and velocities of the three
-    jumpers given the initial conditions that all positions and velocities are zero at t=0.
-    Use the following parameters for your calculations:
-
-    m_1 = 60 kg
-    m_2 = 70 kg
-    m_3 = 80 kg
-    k1 = k3 = 50 N/m
-    k2 = 100 N/m
-    '''
     def fcn(t, x):
         # Instantiate an array of zeros to hold the array elements
-        fcn = np.zeros(6)
-        # Mass of each jumper
-        m1 = 60 # kg
-        m2 = 70 # kg
-        m3 = 80 # kg
-        # Gravity
-        g = 9.81 # m/s**2
-        # Bungee Cord Spring         k1 = 50 # (N/m)
-        k2 = 100 # (N/m)
-        k3 = 50 # (N/m)
-        # Velocities for each of the jumpers:
-        # dx_1/dt = v1
-        fcn[0] = x[3]
-        # dx_2/dt = v2
-        fcn[1] = x[4]
-        # dx_3/dt = v3
-        fcn[2] = x[5]
-        # Displacements for each jumper:
-        # dv_1/dt = g + (k2/m1)*x_2 - ((k1 + k2)/m1)*x_1
-        fcn[3] = g + (k2/m1)*x[1] - ((k1 + k2)/m1)*x[0]
-        # dv_2/dt = g + (k2/m2)*x_1 - ((k1 + k2)/m2)*x_2 + (k3/m2)*x_3
-        fcn[4] = g + (k2/m2)*x[0] - ((k2 + k3)/m2)*x[1] + (k3/m2)*x[2]
-        # dv_3/dt = g + (k3/m3)*x_2 - (k3/m3)*x_3
-        fcn[5] = g + (k3/m3)*x[1] - (k3/m3) * x[2]
+        fcn = np.zeros(8)
+
+        fcn[0] = x[4] # Velocity
+        fcn[1] = x[5] # UBwx
+        fcn[2] = x[6] # UBwy
+        fcn[3] = x[7] # UBwz
+
+        fcn[4] = -g*np.sin(initialAngle) - coeffDrag*x[4]/bulletMass
+        fcn[5] = -coeffDrag*x[5]/Inertia_Inline
+        fcn[6] = (1-Inertia_Inline/Inertia_OffAxis)*x[5]*x[7]
+        fcn[7] = (-1*Inertia_Inline/Inertia_OffAxis)*x[5]*x[6]
         return fcn
     # Array for start and ending times
     t = np.array([0, 100])
     # Array holding the initial values (velocity and displacement) for each of the jumpers (everything starts at zero)
-    x = np.array([0]*6)
+    x = np.array([0]*8)
+    x[0] = 0 # Q1
+    x[1] = 0 # rad QBwx
+    x[2] = 0 # rad QBwy
+    x[3] = initialAngle # rad QBwz
+    x[4] = 860 # m/s U1
+    x[5] = 1.7772815 # rad/s UBwx
+    x[6] = 0.01 # rad/s UBwy
+    x[7] = 0.01
     # Feed ode45py almost exactly like you would in MATLAB
-    X, Y = ode45py(fcn, t, x, iter_lim=200000)
+    X, Y = ode45py(fcn, t, x, iter_lim=2000000)
+    dataFile = get_filename('trajectoryData','.csv','./log_files/')
+    heading = 'time(s), Y[0], Y[1], Y[2], Y[3], Y[4], Y[5], Y[6], Y[7]'
 
+    np.savetxt(dataFile, (X, Y[:,0], Y[:,1], Y[:,2], Y[:,3], Y[:,4], Y[:,5], Y[:,6], Y[:,7]), delimiter=',', header=heading, newline='\n')
+
+    plotFile1 = get_filename('timeAndDisplacement','.png','./log_files/')
     # Displacement data is stored in the first three columns
-    plt.plot(X, Y[:,0], label='m1 = 60kg')
-    plt.plot(X, Y[:,1], label='m2 = 70kg')
-    plt.plot(X, Y[:,2], label='m3 = 80kg')
+    plt.plot(X, Y[:,0])
+    # plt.plot(X, Y[:,1])
+    # plt.plot(X, Y[:,2])
+    # plt.plot(X, Y[:,3])
     plt.xlabel('Time (s)')
     plt.ylabel('Displacement (m)')
-    plt.title('Bungee Jumper Displacement')
-    plt.legend()
+    plt.title('Displacement Data')
+    plt.savefig(plotFile1, bbox_inches='tight')
     plt.show()
 
-    # Velocity data is stored in the last three columns
-    plt.plot(X, Y[:,3], label='m1 = 60kg')
-    plt.plot(X, Y[:,4], label='m2 = 70kg')
-    plt.plot(X, Y[:,5], label='m3 = 80kg')
+    plotFile2 = get_filename('velocityAndTime','.png','./log_files/')
+    plt.plot(X, Y[:,4])
+    # plt.plot(X, Y[:,5])
+    # plt.plot(X, Y[:,6])
+    # plt.plot(X, Y[:,7])
     plt.xlabel('Time (s)')
     plt.ylabel('Velocity (m/s)')
-    plt.title('Bungee Jumper Velocity')
-    plt.legend()
+    plt.title('Velocity Data')
+    plt.savefig(plotFile2, bbox_inches='tight')
     plt.show()
+
+    plotFile3 = get_filename('trajectory','.png','./log_files/')
+    pos_x = []
+    pos_y = []
+    for i in Y[:,0]:
+        pos_x.append(i*np.cos(initialAngle))
+        pos_y.append(i*np.sin(initialAngle))
+    plt.plot(pos_x, pos_y)
+    plt.xlabel('Displacement X (m)')
+    plt.ylabel('Displacement Y (m)')
+    plt.title('Trajectory Data')
+    plt.savefig(plotFile3, bbox_inches='tight')
+    plt.show()
+bulletSim()

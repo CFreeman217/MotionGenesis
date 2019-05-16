@@ -29,4 +29,3 @@ OutputPlot  t sec,  theta degrees
 ODE() MGSpinStability3DRigidBodyWithBodyXYZAngles.m
 %------------------------------------------------------------
 Save MGSpinStability3DRigidBodyWithBodyXYZAngles.html
-Quit
