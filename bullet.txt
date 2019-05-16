@@ -7,6 +7,10 @@ Constant g = 9.81 m/s^2 % Gravity
 Constant rho = 1.2 kg/m^3 % Density of air at sea level
 Constant coeffDrag = 0.5 noUnits % Drag Coefficient
 
+Constant initialVelocity = 860 m/s 
+Constant initialAngle = 30 deg
+Constant barrelTwistRate = 12 noUnits % Inches per revolution
+
 %%% Projectile %%%
 RigidBody B % Bullet with positive x axis running from the origin at the base through the tip
 RigidFrame V(B) % Trajectory of the bullet attached to the bullet body
@@ -20,7 +24,7 @@ Constant boatTailLength = 0.004445 m %.175in
 
 Constant boatTailAngle = 9.0 deg
 Constant oal = 0.028956 m % 1.140in
-Constant bulletMass = 9.52544 g % 9.52544g = 147gr
+Constant bulletMass = 9.52544e-3 kg % 9.52544g = 147gr
 
 % Assume homogenous density and approximate mass distribution with cones and cylinders
 Constant areaSection = pi*r^2
@@ -50,6 +54,8 @@ Constant InertiaBoatTailOffAxis = IbtConeBigOffAxis - IbtConeSmallOffAxis
 Constant InertiaOgiveOffAxis = massOgive*(ogiveLength^2/10 + 3*r^2/20)
 Constant Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis
 
+Specified initialSpin = (12/barrelTwistRate)*(initialVelocity*(2*pi*3.28084))
+
 B.SetMass(bulletMass)
 B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
 
@@ -60,53 +66,68 @@ B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
 % Let Qr = Roll
 % Let Qu = Yaw
 
-
-
 % Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
-Variable Qx', Qy', Ux', Uy'
 % SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
-SetGeneralizedSpeed(Ux, Uy)
 
-Qx' = Ux
-Qy' = Uy
-% Qz' = Uz
-% Qp' = Up
-% Qr' = Ur
-% Qu' = Uu
-Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
-B.SetAngularVelocity(N, 0>)
-System.AddForceGravity( -g*Ny> )
-Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N) )
 
-% DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
+% Variable Qx', Qy', Ux', Uy'
+% SetGeneralizedSpeed(Ux, Uy)
 
-zero = System.GetDynamicsKane()
-
-Solve(zero = 0, Ux', Uy')
-
-Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
-Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
-Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
-
-OutputPlot Qx m, Qy m
-OutputPlot t sec, (Ux^2 +Uy^2)^0.5 m/s
-
-% Variable Q1', Q2', U1', U2'
-% SetGeneralizedSpeed(U1, U2)
-% Q1' = U1
-% Q2' = U2
-
-% B.RotateZ(N, Q2)
-% Bcm.Translate(No, Q1*Bx>)
+% Qx' = Ux
+% Qy' = Uy
+% % Qz' = Uz
+% % Qp' = Up
+% % Qr' = Ur
+% % Qu' = Uu
+% Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
+% B.SetAngularVelocity(N, 0>)
 % System.AddForceGravity( -g*Ny> )
-% Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
-% express(v_Bcm_N>, N)
-% zero = System.GetDynamicsKane()
-% Solve(zero = 0, U1', U2')
-% Input tFinal = 40.0, tStep = 0.1, absError = 1.0E-07
-% Input Q1 = 0 m, U1 = 860 m/s
-% Input Q2 = 45 deg, U2 = 0 rad/s
-% OutputPlot Q1 m, Q2 deg
-ODE() bulletSim3.m
+% Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N) )
 
-save projTrivialCase3.html
+% % DragForce> = -1/2*rho*areaSection*coeffDrag*U1*Bx>
+
+% zero = System.GetDynamicsKane()
+
+% Solve(zero = 0, Ux', Uy')
+
+% Input tFinal = 60.0, tStep = 0.001, absError = 1.0E-07
+% Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
+% Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
+
+% OutputPlot Qx m, Qy m
+% OutputPlot t sec, (Ux^2 +Uy^2)^0.5 m/s
+
+Variable Q1', QBwx', QBwy', QBwz' , U1', UBwx', UBwy', UBwz'
+SetGeneralizedSpeed(U1, UBwx, UBwy, UBwz)
+
+Q1' = U1
+% Q2' = U2
+QBwx' = UBwx
+QBwy' = UBwy
+QBwz' = UBwz
+
+B.RotateZ(N, initialAngle)
+Bcm.SetVelocity(N, U1*Bx>)
+B.SetAngularVelocityAcceleration(N, UBwx*Bx> + UBwy*By> + UBwz*Bz>)
+% B.RotateZ(N, initialAngle)
+System.AddForceGravity( -g*Ny> )
+Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
+% express(v_Bcm_N>, N)
+zero = System.GetDynamicsKane()
+Solve(zero = 0, U1', UBwx', UBwy', UBwz')
+Input tFinal = 60.0, tStep = 0.01, absError = 1.0E-07
+Input Q1 = 0 m, U1 = 860 m/s 
+% Input Q2 = initialAngle , U2 = 0 rad/s
+Input QBwx = 0 deg, UBwx = 177728.15 rad/sec
+Input QBwy = 0 deg, UBwy = 0 rad/sec
+Input QBwz = 0 deg, UBwz = 0 rad/sec
+H> = B.GetAngularMomentum(Bcm)
+Hmag = GetMagnitude(H>)
+Wmag = B.GetAngularSpeed(N)
+theta = acos(dot(H>, B.GetAngularVelocity(N))/(Hmag*Wmag))
+OutputPlot t sec, Q1 m
+OutputPlot t sec, UBwx rad/sec, UBwy rad/sec, UBwz rad/sec
+
+ODE() bulletRotate1.m
+
+save projBulletRotation.html
