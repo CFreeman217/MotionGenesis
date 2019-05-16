@@ -174,43 +174,46 @@
    (131) Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
 -> (132) Force_Bcm> = -coeffDrag*U1*Bx> - bulletMass*g*Ny>
 
-   (133) % express(v_Bcm_N>, N)
-   (134) zero = System.GetDynamicsKane()
--> (135) zero[1] = bulletMass*g*sin(initialAngle) + coeffDrag*U1 + bulletMass*U1'
--> (136) zero[2] = Inertia_Inline*UBwx'
--> (137) zero[3] = (Inertia_Inline-Inertia_OffAxis)*UBwx*UBwz + Inertia_OffAxis*UBwy'
--> (138) zero[4] = Inertia_OffAxis*UBwz' - (Inertia_Inline-Inertia_OffAxis)*UB
+   (133) B.AddTorque( -coeffDrag*UBwx*Bx>)
+-> (134) Torque_B> = -coeffDrag*UBwx*Bx>
+
+   (135) % express(v_Bcm_N>, N)
+   (136) zero = System.GetDynamicsKane()
+-> (137) zero[1] = bulletMass*g*sin(initialAngle) + coeffDrag*U1 + bulletMass*U1'
+-> (138) zero[2] = coeffDrag*UBwx + Inertia_Inline*UBwx'
+-> (139) zero[3] = (Inertia_Inline-Inertia_OffAxis)*UBwx*UBwz + Inertia_OffAxis*UBwy'
+-> (140) zero[4] = Inertia_OffAxis*UBwz' - (Inertia_Inline-Inertia_OffAxis)*UB
          wx*UBwy
 
-   (139) Solve(zero = 0, U1', UBwx', UBwy', UBwz')
--> (140) U1' = -g*sin(initialAngle) - coeffDrag*U1/bulletMass
--> (141) UBwx' = 0
--> (142) UBwy' = (1-Inertia_Inline/Inertia_OffAxis)*UBwx*UBwz
--> (143) UBwz' = (-1+Inertia_Inline/Inertia_OffAxis)*UBwx*UBwy
+   (141) Solve(zero = 0, U1', UBwx', UBwy', UBwz')
+-> (142) U1' = -g*sin(initialAngle) - coeffDrag*U1/bulletMass
+-> (143) UBwx' = -coeffDrag*UBwx/Inertia_Inline
+-> (144) UBwy' = (1-Inertia_Inline/Inertia_OffAxis)*UBwx*UBwz
+-> (145) UBwz' = (-1+Inertia_Inline/Inertia_OffAxis)*UBwx*UBwy
 
-   (144) Input tFinal = 60.0, tStep = 0.01, absError = 1.0E-07
-   (145) Input Q1 = 0 m, U1 = 860 m/s 
-   (146) % Input Q2 = initialAngle , U2 = 0 rad/s
-   (147) Input QBwx = 0 deg, UBwx = 177728.15 rad/sec
-   (148) Input QBwy = 0 deg, UBwy = 0 rad/sec
-   (149) Input QBwz = 0 deg, UBwz = 0 rad/sec
-   (150) H> = B.GetAngularMomentum(Bcm)
--> (151) H> = Inertia_Inline*UBwx*Bx> + Inertia_OffAxis*UBwy*By> + Inertia_OffAxis*UBwz*Bz>
+   (146) Input tFinal = 60.0, tStep = 0.01, absError = 1.0E-07
+   (147) Input Q1 = 0 m, U1 = 860 m/s 
+   (148) % Input Q2 = initialAngle , U2 = 0 rad/s
+   (149) Input QBwx = 0 deg, UBwx = 177728.15 rad/sec
+   (150) Input QBwy = 0 deg, UBwy = 0 rad/sec
+   (151) Input QBwz = 0 deg, UBwz = 0 rad/sec
+   (152) H> = B.GetAngularMomentum(Bcm)
+-> (153) H> = Inertia_Inline*UBwx*Bx> + Inertia_OffAxis*UBwy*By> + Inertia_OffAxis*UBwz*Bz>
 
-   (152) Hmag = GetMagnitude(H>)
--> (153) Hmag = sqrt(Inertia_Inline^2*UBwx^2+Inertia_OffAxis^2*UBwy^2+Inertia_OffAxis^2
+   (154) Hmag = GetMagnitude(H>)
+-> (155) Hmag = sqrt(Inertia_Inline^2*UBwx^2+Inertia_OffAxis^2*UBwy^2+Inertia_OffAxis^2
          *UBwz^2)
 
-   (154) Wmag = B.GetAngularSpeed(N)
--> (155) Wmag = sqrt(UBwx^2+UBwy^2+UBwz^2)
+   (156) Wmag = B.GetAngularSpeed(N)
+-> (157) Wmag = sqrt(UBwx^2+UBwy^2+UBwz^2)
 
-   (156) theta = acos(dot(H>, B.GetAngularVelocity(N))/(Hmag*Wmag))
--> (157) theta = acos((Inertia_Inline*UBwx^2+Inertia_OffAxis*UBwy^2+Inertia_Of
+   (158) theta = acos(dot(H>, B.GetAngularVelocity(N))/(Hmag*Wmag))
+-> (159) theta = acos((Inertia_Inline*UBwx^2+Inertia_OffAxis*UBwy^2+Inertia_Of
          fAxis*UBwz^2)/(Hmag*Wmag))
 
-   (158) OutputPlot t sec, Q1 m
-   (159) OutputPlot t sec, UBwx rad/sec, UBwy rad/sec, UBwz rad/sec
-   (160) ODE() bulletRotate1.m
+   (160) OutputPlot t sec, Q1 m
+   (161) OutputPlot t sec, UBwx rad/sec, UBwy rad/sec, UBwz rad/sec
+   (162) ODE() bulletRotate1.m
 
 </PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
 </DIV></BODY></HTML>

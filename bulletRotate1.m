@@ -88,7 +88,6 @@ IbtConeBigOffAxis = 0.1*massBaseConeBig*r^2*(1.5+tan(boatTailAngle)^2);
 InertiaBoatTailOffAxis = IbtConeBigOffAxis - IbtConeSmallOffAxis;
 InertiaOgiveOffAxis = 0.1*massOgive*(ogiveLength^2+1.5*r^2);
 Inertia_OffAxis = IbearingOffAxis + InertiaBoatTailOffAxis + InertiaOgiveOffAxis;
-UBwxDt = 0;
 
 
 VAR = SetMatrixFromNamedQuantities;
@@ -106,6 +105,7 @@ QBwxDt = UBwx;
 QBwyDt = UBwy;
 QBwzDt = UBwz;
 U1Dt = -g*sin(initialAngle) - coeffDrag*U1/bulletMass;
+UBwxDt = -coeffDrag*UBwx/Inertia_Inline;
 UBwyDt = (1-Inertia_Inline/Inertia_OffAxis)*UBwx*UBwz;
 UBwzDt = (-1+Inertia_Inline/Inertia_OffAxis)*UBwx*UBwy;
 
