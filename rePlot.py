@@ -30,5 +30,6 @@ def get_filename(prefix, suffix, base_path):
     return fileName
 
 for file_name in os.listdir('./log_files/'):
-    if file_name.endswith(''+'.csv')
+    if file_name.endswith(''+'.csv'):
+        pass
 
