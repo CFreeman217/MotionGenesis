@@ -118,7 +118,7 @@
    (85) % Let Qu = Yaw
    (86) % Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
    (87) % SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
-   (88) Variable Qx', Qy', Ux', Uy', Cd
+   (88) Variable Qx', Qy', Ux', Uy', Cd'
    (89) SetGeneralizedSpeed(Ux, Uy)
    (90) Qx' = Ux
 -> (91) Qx' = Ux
@@ -141,55 +141,54 @@
    (104) System.AddForceGravity( -g*Ny> )
 -> (105) Force_Bcm> = -bulletMass*g*Ny>
 
-   (106) Cd = 8/(density*(GetMagnitude(Bcm.GetVelocity(N)))^2*pi*(2*r)^2)
+   (106) SetDt(Cd = 8/(density*(GetMagnitude(Bcm.GetVelocity(N)))^2*pi*(2*r)^2))
 -> (107) Cd = 0.6366198/(density*r^2*(Ux^2+Uy^2))
+-> (108) Cd' = -1.27324*(Ux*Ux'+Uy*Uy')/(density*r^2*(Ux^2+Uy^2)^2)
 
-   (108) Bcm.AddForce( -Cd*Bcm.GetVelocity(N) )
--> (109) Force_Bcm> = -Cd*Ux*Nx> + (-bulletMass*g-Cd*Uy)*Ny>
+   (109) Bcm.AddForce( -Cd*Bcm.GetVelocity(N) )
+-> (110) Force_Bcm> = -Cd*Ux*Nx> + (-bulletMass*g-Cd*Uy)*Ny>
 
-   (110) zero = System.GetDynamicsKane()
--> (111) zero = [Cd*Ux + bulletMass*Ux';  bulletMass*g + Cd*Uy + bulletMass*Uy']
+   (111) zero = System.GetDynamicsKane()
+-> (112) zero = [Cd*Ux + bulletMass*Ux';  bulletMass*g + Cd*Uy + bulletMass*Uy']
 
-   (112) Solve(zero = 0, Ux', Uy')
--> (113) Ux' = -Cd*Ux/bulletMass
--> (114) Uy' = -g - Cd*Uy/bulletMass
+   (113) Solve(zero = 0, Ux', Uy')
+-> (114) Ux' = -Cd*Ux/bulletMass
+-> (115) Uy' = -g - Cd*Uy/bulletMass
 
-   (115) Input tFinal = 60.0, tStep = 0.001, absError = 1.0E-07
-   (116) Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
-   (117) Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
-   (118) OutputPlot Qx m, Qy m
-   (119) OutputPlot t sec, Cd noUnits
-   (120) % % OutputPlot t sec, (Ux^2 +Uy^2)^0.5 m/s
-   (121) % Variable Q1', QBwx', QBwy', QBwz' , U1', UBwx', UBwy', UBwz'
-   (122) % SetGeneralizedSpeed(U1, UBwx, UBwy, UBwz)
-   (123) % Q1' = U1
-   (124) % % Q2' = U2
-   (125) % QBwx' = UBwx
-   (126) % QBwy' = UBwy
-   (127) % QBwz' = UBwz
-   (128) % B.RotateZ(N, initialAngle)
-   (129) % Bcm.SetVelocity(N, U1*Bx>)
-   (130) % B.SetAngularVelocityAcceleration(N, UBwx*Bx> + UBwy*By> + UBwz*Bz>)
-   (131) % % B.RotateZ(N, initialAngle)
-   (132) % System.AddForceGravity( -g*Ny> )
-   (133) % Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
-   (134) % B.AddTorque( -coeffDrag*UBwx*Bx>)
-   (135) % % express(v_Bcm_N>, N)
-   (136) % zero = System.GetDynamicsKane()
-   (137) % Solve(zero = 0, U1', UBwx', UBwy', UBwz')
-   (138) % Input tFinal = 60.0, tStep = 0.01, absError = 1.0E-07
-   (139) % Input Q1 = 0 m, U1 = 860 m/s 
-   (140) % % Input Q2 = initialAngle , U2 = 0 rad/s
-   (141) % Input QBwx = 0 deg, UBwx = 177728.15 rad/sec
-   (142) % Input QBwy = 0 deg, UBwy = 0 rad/sec
-   (143) % Input QBwz = 0 deg, UBwz = 0 rad/sec
-   (144) % H> = B.GetAngularMomentum(Bcm)
-   (145) % Hmag = GetMagnitude(H>)
-   (146) % Wmag = B.GetAngularSpeed(N)
-   (147) % theta = acos(dot(H>, B.GetAngularVelocity(N))/(Hmag*Wmag))
-   (148) % OutputPlot t sec, Q1 m
-   (149) % OutputPlot t sec, UBwx rad/sec, UBwy rad/sec, UBwz rad/sec
-   (150) ODE() bulletCd1.m
-
+   (116) Input tFinal = 60.0, tStep = 0.001, absError = 1.0E-07
+   (117) Input Qx = 0 m, Ux = 860 * cosDegrees(45) m/s 
+   (118) Input Qy = 0 m, Uy = 860 * sinDegrees(45) m/s
+   (119) OutputPlot Qx m, Qy m
+   (120) OutputPlot t sec, Cd noUnits
+   (121) % % OutputPlot t sec, (Ux^2 +Uy^2)^0.5 m/s
+   (122) % Variable Q1', QBwx', QBwy', QBwz' , U1', UBwx', UBwy', UBwz'
+   (123) % SetGeneralizedSpeed(U1, UBwx, UBwy, UBwz)
+   (124) % Q1' = U1
+   (125) % % Q2' = U2
+   (126) % QBwx' = UBwx
+   (127) % QBwy' = UBwy
+   (128) % QBwz' = UBwz
+   (129) % B.RotateZ(N, initialAngle)
+   (130) % Bcm.SetVelocity(N, U1*Bx>)
+   (131) % B.SetAngularVelocityAcceleration(N, UBwx*Bx> + UBwy*By> + UBwz*Bz>)
+   (132) % % B.RotateZ(N, initialAngle)
+   (133) % System.AddForceGravity( -g*Ny> )
+   (134) % Bcm.AddForce( -coeffDrag*Bcm.GetVelocity(N))
+   (135) % B.AddTorque( -coeffDrag*UBwx*Bx>)
+   (136) % % express(v_Bcm_N>, N)
+   (137) % zero = System.GetDynamicsKane()
+   (138) % Solve(zero = 0, U1', UBwx', UBwy', UBwz')
+   (139) % Input tFinal = 60.0, tStep = 0.01, absError = 1.0E-07
+   (140) % Input Q1 = 0 m, U1 = 860 m/s 
+   (141) % % Input Q2 = initialAngle , U2 = 0 rad/s
+   (142) % Input QBwx = 0 deg, UBwx = 177728.15 rad/sec
+   (143) % Input QBwy = 0 deg, UBwy = 0 rad/sec
+   (144) % Input QBwz = 0 deg, UBwz = 0 rad/sec
+   (145) % H> = B.GetAngularMomentum(Bcm)
+   (146) % Hmag = GetMagnitude(H>)
+   (147) % Wmag = B.GetAngularSpeed(N)
+   (148) % theta = acos(dot(H>, B.GetAngularVelocity(N))/(Hmag*Wmag))
+   (149) % OutputPlot t sec, Q1 m
+   (150) % OutputPlot t sec, UBwx rad/sec, UBwy rad/sec, UBwz rad/sec
 </PRE><nobr><font color="darkBlue"><font size=-3><b>Saved by clayFreeman19. &nbsp; Command names and syntax: Copyright (c) 2009-2019 Motion Genesis LLC.  All rights reserved.</b></font></font></nobr>
 </DIV></BODY></HTML>

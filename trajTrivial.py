@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-import datetime, os
+import datetime, os, csv
 
 g = 9.81 # Gravity
 rho = 1.2 # Density of air at sea level
@@ -33,6 +33,7 @@ volumeBoatTail = (np.pi*np.tan(boatTailAngle)/3)*(r**3 - BaseRadius**3)
 volumeBearing = np.pi*r**2*(oal - boatTailLength - ogiveLength)
 volumeTotal = volumeOgive + volumeBoatTail + volumeBearing
 density = bulletMass/1000*volumeTotal # <--------------------------- Modified for Expanding Bullet Mass
+print('Density = {}'.format(density))
 massOgive = volumeOgive * density
 massBoatTail = volumeBoatTail * density
 massBearing = volumeBearing * density
@@ -81,7 +82,7 @@ def get_filename(prefix, suffix, base_path):
     return fileName
 
 
-def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
+def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000, coeff='dopri'):
     '''
     Numerical Methods: Differential Equations, Initial Value Problems
 
@@ -89,26 +90,42 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
     Includes adaptive step size adjustment
     Imitates MATLAB ode45 functionality and output
     '''
-    # Dormand-Prince coefficients for RK algorithm -
-    a1 = 0.2; a2 = 0.3; a3 = 0.8; a4 = 8/9; a5 = 1.0; a6 = 1.0
-    c0 = 35/384; c2 = 500/1113; c3 = 125/192; c4 = -2187/6784; c5=11/84
-    d0 = 5179/57600; d2 = 7571/16695; d3 = 393/640; d4 = -92097/339200; d5 = 187/2100; d6 = 1/40
-    b10 = 0.2
-    b20 = 0.075; b21 = 0.225
-    b30 = 44/45; b31 = -56/15; b32 = 32/9
-    b40 = 19372/6561; b41 = -25360/2187; b42 = 64448/6561; b43 = -212/729
-    b50 = 9017/3168; b51 = -355/33; b52 = 46732/5247; b53 = 49/176; b54 = -5103/18656
-    b60 = 35/384; b62 = 500/1113; b63 = 125/192; b64 = -2187/6784; b65 = 11/84
-    # Cash-Karp coefficients for RK algorithm -
-    a1 = 0.2; a2 = 0.3; a3 = 0.8; a4 = 8/9; a5 = 1.0; a6 = 1.0
-    c0 = 35/384; c2 = 500/1113; c3 = 125/192; c4 = -2187/6784; c5=11/84
-    d0 = 5179/57600; d2 = 7571/16695; d3 = 393/640; d4 = -92097/339200; d5 = 187/2100; d6 = 1/40
-    b10 = 0.2
-    b20 = 0.075; b21 = 0.225
-    b30 = 44/45; b31 = -56/15; b32 = 32/9
-    b40 = 19372/6561; b41 = -25360/2187; b42 = 64448/6561; b43 = -212/729
-    b50 = 9017/3168; b51 = -355/33; b52 = 46732/5247; b53 = 49/176; b54 = -5103/18656
-    b60 = 35/384; b62 = 500/1113; b63 = 125/192; b64 = -2187/6784; b65 = 11/84
+    if coeff == 'dopri':
+        # Dormand-Prince coefficients for RK algorithm -
+        a0 = 0; a1 = 0.2; a2 = 0.3; a3 = 0.8; a4 = 8/9; a5 = 1.0; a6 = 1.0
+        c0 = 35/384; c1 = 0; c2 = 500/1113; c3 = 125/192; c4 = -2187/6784; c5=11/84; c6 = 0
+        d0 = 5179/57600; d1 = 0; d2 = 7571/16695; d3 = 393/640; d4 = -92097/339200; d5 = 187/2100; d6 = 1/40
+        b10 = 0.2
+        b20 = 0.075; b21 = 0.225
+        b30 = 44/45; b31 = -56/15; b32 = 32/9
+        b40 = 19372/6561; b41 = -25360/2187; b42 = 64448/6561; b43 = -212/729
+        b50 = 9017/3168; b51 = -355/33; b52 = 46732/5247; b53 = 49/176; b54 = -5103/18656
+        b60 = 35/384; b61 = 0; b62 = 500/1113; b63 = 125/192; b64 = -2187/6784; b65 = 11/84
+        
+
+    elif coeff == 'cashk':
+        # Cash-Karp coefficients for RK algorithm -
+        a0 = 0; a1 = 0; a2 = 1/5; a3 = 3/10; a4 = 3/5; a5 = 1.0; a6 = 7/8
+        c0 = 37/378; c1 = 0; c2 = 250/621; c3 = 125/594; c4 = 0; c5=512/1771; c6 = 0
+        d0 = 2825/27648; d1 =0; d2 = 18575/48384; d3 = 13525/55296; d4 = 277/14336; d5 = 1/4; d6 = 0
+        b10 = 0
+        b20 = 1/5; b21 = 0
+        b30 = 3/40; b31 = 9/40; b32 = 0
+        b40 = 3/10; b41 = -9/10; b42 = 6/5; b43 = 0
+        b50 = -11/54; b51 = 5/2; b52 = -70/27; b53 = 35/27; b54 = 0
+        b60 = 1631/55296; b61 = 175/512; b62 = 575/13824; b63 = 44275/110592; b64 = 253/4096; b65 = 0
+    else:
+        # Fehlberg coefficients for RK algorithm -
+        a0 = 0; a1 = 0; a2 = 1/4; a3 = 3/8; a4 = 12/13; a5 = 1.0; a6 = 1/2
+        c0 = 16/135; c1 = 0; c2 = 6656/12825; c3 = 28561/56430; c4 = -9/50; c5=2/55; c6 = 0
+        d0 = 25/216; d1 =0; d2 = 1408/2565; d3 = 2197/4104; d4 = -1/5; d5 = 0; d6 = 0
+        b10 = 0
+        b20 = 1/4; b21 = 0
+        b30 = 3/32; b31 = 9/32; b32 = 0
+        b40 = 1932/2197; b41 = -7200/2197; b42 = 7296/2197; b43 = 0
+        b50 = 439/216; b51 = -8; b52 = 3680/513; b53 = -845/4104; b54 = 0
+        b60 = -8/27; b61 = 2; b62 = -3544/2565; b63 = 1859/4104; b64 = -11/40; b65 = 0
+
     # Store initial values
     x_f = x[-1]
     x_n = x[0]
@@ -125,23 +142,26 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
     k0 = st_sz * func(x_n, y)
     # Generate the RK coefficients
     for i in range(iter_lim):
+        # if coeff != 'dopri': 
+        k0 = st_sz * func(x_n + a0*st_sz, y)
         k1 = st_sz * func(x_n + a1*st_sz, y + b10*k0)
         k2 = st_sz * func(x_n + a2*st_sz, y + b20*k0 + b21*k1)
         k3 = st_sz * func(x_n + a3*st_sz, y + b30*k0 + b31*k1 + b32*k2)
         k4 = st_sz * func(x_n + a4*st_sz, y + b40*k0 + b41*k1 + b42*k2 + b43*k3)
         k5 = st_sz * func(x_n + a5*st_sz, y + b50*k0 + b51*k1 + b52*k2 + b53*k3 + b54*k4)
-        k6 = st_sz * func(x_n + a6*st_sz, y + b60*k0 + b62*k2 + b63*k3 + b64*k4 + b65*k5)
+        k6 = st_sz * func(x_n + a6*st_sz, y + b60*k0 + b61*k1 + b62*k2 + b63*k3 + b64*k4 + b65*k5)
         # Getting to the slope is the whole point of this mess
-        dy = c0*k0 + c2*k2 + c3*k3 + c4*k4 + c5*k5
+        dy = c0*k0 + c1*k1 + c2*k2 + c3*k3 + c4*k4 + c5*k5 + c6*k6
         # Determine the estimated change in slope by comparing the output coefficients for each RK coefficient
-        E = (c0 - d0)*k0 + (c2 - d2)*k2 + (c3 - d3)*k3 + (c4 - d4)*k4 + (c5 - d5)*k5 - d6*k6
+        E = (c0 - d0)*k0 + (c1 - d1)*k1 + (c2 - d2)*k2 + (c3 - d3)*k3 + (c4 - d4)*k4 + (c5 - d5)*k5 + (c6 - d6)*k6
         # Find the estimated error using a sum of squares method
         e = np.sqrt(np.sum(E**2)/len(y))
         # we don't know if the new value i
         hNext = 0.9*st_sz*(tol/e)**0.2
         pcnt = (i/iter_lim)*100
         psolv = (x_n/x_f)*100
-        print('Correction limit : {:1.2f}  x-domain solved: {:1.2f}#'.format(pcnt, psolv))
+
+        print('Correction limit : {:1.2f}  x-domain solved: {:1.2f}'.format(pcnt, psolv))
         # If approximated error is within tolerance, accept this integration step and move on
         if e <= tol:
             # Store the new result
@@ -163,7 +183,9 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
                 stopper = 1
                 print('Success! Reached the end of the data set.')
             # Setting k0 to k6 * (next step size) / (current step size) forces the algorithm to use the 4th order formula for the next step
+            # if coeff == 'dopri': 
             k0 = k6*hNext/st_sz
+
         else:
             # The error estimate is outside the required threshold to move on, we need to redo the calculation with a smaller step size
             if abs(hNext) < abs(st_sz)*0.1 : hNext = st_sz*0.1
@@ -176,73 +198,84 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000):
     return np.array(X), np.array(Y)
 
 
-def bulletSim():
+# def bulletSim():
 
-    def fcn(t, x):
-        # Instantiate an array of zeros to hold the array elements
-        fcn = np.zeros(4)
+def fcn(t, x):
+    # Instantiate an array of zeros to hold the array elements
+    fcn = np.zeros(5)
 
-        fcn[0] = Ux = x[2]
-        fcn[1] = Uy = x[3]
-        Cd = 0.6366198/(density*r^2*(x[2]^2+x[1]^2))
-        fcn[2] = -Cd*Ux/bulletMass
-        fcn[3] = -g - Cd*Uy/bulletMass
+    fcn[0] = Ux = x[2]
+    fcn[1] = Uy = x[3]
+    fcn[2] = Cd = 0.5#np.tanh(8/ ( density * (Ux**2 + Uy**2) * diameter**2 * np.pi))
+    fcn[3] = -Cd*Ux/bulletMass
+    fcn[4] = -g - Cd*Uy/bulletMass
+    
+    return fcn
+# Array for start and ending times
+t = np.array([0, 60])
+x = np.array([0]*5)
+x[0] = 0
+x[1] = 0
+x[2] = 0
+x[3] = initialVelocity*np.cos(initialAngle)
+x[4] = initialVelocity*np.sin(initialAngle)
 
-        return fcn
-    # Array for start and ending times
-    t = np.array([0, 60])
-    x = np.array([0]*4)
-    x[0] = 0
-    x[1] = 0
-    x[2] = initialVelocity*np.cos(initialAngle)
-    x[3] = initialVelocity*np.sin(initialAngle)
 
-    # Feed ode45py almost exactly like you would in MATLAB
-    X, Y = ode45py(fcn, t, x, tol=1.0e-8, iter_lim=20000)
-    dataFile = get_filename('trivialData','.csv','./log_files/')
-    heading = 'time(s), x_pos, y_pos, x_vel, y_vel'
+# Feed ode45py almost exactly like you would in MATLAB
+X, Y = ode45py(fcn, t, x, tol=1.0e-16, iter_lim=2000000)
+dataFile = get_filename('varDragData','.csv','./log_files/')
+heading = ['time(s)', 'x_pos', 'y_pos', 'Cd', 'x_vel', 'y_vel']
+with open(dataFile, 'a', newline='\n') as myFile:
+    writer = csv.writer(myFile)
+    writer.writerow(heading)
+    for key, val in enumerate(X):
+        dataOut = []
+        dataOut.append(val)
+        for i in Y[key]:
+            dataOut.append(i)
+        writer.writerow(dataOut)
+# np.savetxt(dataFile, (X[:], Y[:,0], Y[:,1], Y[:,2], Y[:,3], Y[:,4]), delimiter=',', header=heading, newline='\n')
 
-    np.savetxt(dataFile, (X, Y[:,0], Y[:,1], Y[:,2], Y[:,3]), delimiter=',', header=heading, newline='\n')
+plotFile1 = get_filename('varDrag_trajectory','.png','./log_files/')
 
-    # plotFile1 = get_filename('Trajectory','.png','./log_files/')
-    # # plt.plot(X, Y[:,0], label='X Position')
-    # # plt.plot(X, Y[:,1], label='Y Position')
-    # # plt.plot(X, Y[:,2], label='X Velocity')
-    # # plt.plot(X, Y[:,3], label='Y Velocity')
-    # plt.plot(Y[:,0],Y[:,1], label='Displacement')
-    # plt.xlabel('Displacement X (m)')
-    # plt.ylabel('Displacement Y (m)')
-    # plt.title('Trajectory Data')
-    # plt.legend()
-    # # plt.savefig(plotFile1, bbox_inches='tight')
-    # plt.show()
+# plt.plot(X, Y[:,0], label='X Position')
+# plt.plot(X, Y[:,1], label='Y Position')
+plt.plot(X, Y[:,2], label='Drag Coefficient')
+# plt.plot(X, Y[:,3], label='X Velocity')
+# plt.plot(X, Y[:,4], label='Y Velocity')
+plt.xlabel('X-axis')
+plt.ylabel('Y-axis')
+plt.title('ODE Solver Output')
+plt.legend()
+# plt.savefig(plotFile1, bbox_inches='tight')
+plt.show()
 
-    plotFile2 = get_filename('velocityAndTime','.png','./log_files/')
+plotFile2 = get_filename('varDrag_velTime','.png','./log_files/')
 
-    vel = np.sqrt(Y[:,2]**2 + Y[:,3]**2)
-    for k, v in enumerate(vel):
-        if v < 343:
-            soundIndex = k
-            soundValue = v
-            break
-    plt.plot(X, vel)
-    plt.scatter(X[soundIndex], soundValue, label='Speed of Sound' ,color='r')
-    plt.annotate('({:1.2f} s)'.format(X[soundIndex]), (X[soundIndex] + 2 , soundValue))
-    plt.xlabel('Time (s)')
-    plt.ylabel('Velocity (m/s)')
-    plt.title('Velocity Data')
-    plt.legend()
-    # plt.savefig(plotFile2, bbox_inches='tight')
-    plt.show()
+vel = np.sqrt(Y[:,3]**2 + Y[:,4]**2)
+# for k, v in enumerate(vel):
+#     if v < 343:
+#         soundIndex = k
+#         soundValue = v
+#         break
+plt.plot(X, vel)
+# plt.scatter(X[soundIndex], soundValue, label='Speed of Sound' ,color='r')
+# plt.annotate('({:1.2f} s)'.format(X[soundIndex]), (X[soundIndex] + 2 , soundValue))
+plt.xlabel('Time (s)')
+plt.ylabel('Velocity (m/s)')
+plt.title('Velocity Data')
+plt.legend()
+# plt.savefig(plotFile2, bbox_inches='tight')
+plt.show()
 
-    plotFile3 = get_filename('Trajectory_withSound','.png','./log_files/')
-    plt.plot(Y[:,0],Y[:,1])
-    plt.scatter(Y[soundIndex,0], Y[soundIndex,1], label='Sound Barrier' ,color='r')
-    plt.annotate('({:1.0f}, {:1.0f})'.format(Y[soundIndex,0], Y[soundIndex,1]), (Y[soundIndex,0]-400, Y[soundIndex,1]+0), ha='right')
-    plt.xlabel('Displacement X (m)')
-    plt.ylabel('Displacement Y (m)')
-    plt.title('Trajectory Data')
-    plt.legend()
-    # plt.savefig(plotFile3, bbox_inches='tight')
-    plt.show()
-bulletSim()
+plotFile3 = get_filename('varDrag_Trajectory_withSound','.png','./log_files/')
+plt.plot(Y[:,0],Y[:,1])
+# plt.scatter(Y[soundIndex,0], Y[soundIndex,1], label='Sound Barrier' ,color='r')
+# plt.annotate('({:1.0f}, {:1.0f})'.format(Y[soundIndex,0], Y[soundIndex,1]), (Y[soundIndex,0]-400, Y[soundIndex,1]+0), ha='right')
+plt.xlabel('Displacement X (m)')
+plt.ylabel('Displacement Y (m)')
+plt.title('Trajectory Data')
+plt.legend()
+# plt.savefig(plotFile3, bbox_inches='tight')
+plt.show()
+# bulletSim()

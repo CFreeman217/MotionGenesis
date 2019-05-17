@@ -69,7 +69,7 @@ B.SetInertia(Bcm, Inertia_Inline, Inertia_OffAxis, Inertia_OffAxis)
 % Variable Qx', Qy', Qz', Qp', Qr', Qu', Ux', Uy', Uz', Up', Ur', Uu'
 % SetGeneralizedSpeed(Ux, Uy, Uz, Up, Ur, Uu)
 
-Variable Qx', Qy', Ux', Uy', Cd
+Variable Qx', Qy', Ux', Uy', Cd'
 SetGeneralizedSpeed(Ux, Uy)
 
 Qx' = Ux
@@ -82,7 +82,7 @@ Qy' = Uy
 Bcm.Translate(No, Qx*Nx> + Qy*Ny>)
 B.SetAngularVelocity(N, 0>)
 System.AddForceGravity( -g*Ny> )
-Cd = 8/(density*(GetMagnitude(Bcm.GetVelocity(N)))^2*pi*(2*r)^2)
+SetDt(Cd = 8/(density*(GetMagnitude(Bcm.GetVelocity(N)))^2*pi*(2*r)^2))
 Bcm.AddForce( -Cd*Bcm.GetVelocity(N) )
 
 zero = System.GetDynamicsKane()
