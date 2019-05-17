@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt 
-import datetime, os
+import datetime, os, csv
 
 g = 9.81 # Gravity
 rho = 1.2 # Density of air at sea level
@@ -198,10 +198,16 @@ def bulletSim():
     # Feed ode45py almost exactly like you would in MATLAB
     X, Y = ode45py(fcn, t, x, iter_lim=2000000)
     dataFile = get_filename('trajectoryData','.csv','./log_files/')
-    heading = 'time(s), Y[0], Y[1], Y[2], Y[3], Y[4], Y[5], Y[6], Y[7]'
-
-    np.savetxt(dataFile, (X, Y[:,0], Y[:,1], Y[:,2], Y[:,3], Y[:,4], Y[:,5], Y[:,6], Y[:,7]), delimiter=',', header=heading, newline='\n')
-
+    heading = ['time(s)', 'Q1', 'QBwx', 'QBwy', 'QBwz', 'U1', 'UBwx', 'UBwy', 'UBwz']
+    with open(dataFile, 'a', newline='\n') as myFile:
+        writer = csv.writer(myFile)
+        writer.writerow(heading)
+        for key, val in enumerate(X):
+            dataOut = []
+            dataOut.append(val)
+            for i in Y[key]:
+                dataOut.append(i)
+            writer.writerow(dataOut)    
     plotFile1 = get_filename('timeAndDisplacement','.png','./log_files/')
     # Displacement data is stored in the first three columns
     plt.plot(X, Y[:,0])
