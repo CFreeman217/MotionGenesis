@@ -197,85 +197,85 @@ def ode45py(func, x, y, st_sz=1.0e-4, tol=1.0e-6, iter_lim=50000, coeff='dopri')
     # Returns the arrays for x and y values
     return np.array(X), np.array(Y)
 
+Cd = 0.5
+def bulletSim():
 
-# def bulletSim():
+    def fcn(t, x):
+        # Instantiate an array of zeros to hold the array elements
+        fcn = np.zeros(4)
 
-def fcn(t, x):
-    # Instantiate an array of zeros to hold the array elements
-    fcn = np.zeros(5)
-
-    fcn[0] = Ux = x[2]
-    fcn[1] = Uy = x[3]
-    fcn[2] = Cd = 0.5#np.tanh(8/ ( density * (Ux**2 + Uy**2) * diameter**2 * np.pi))
-    fcn[3] = -Cd*Ux/bulletMass
-    fcn[4] = -g - Cd*Uy/bulletMass
-    
-    return fcn
-# Array for start and ending times
-t = np.array([0, 60])
-x = np.array([0]*5)
-x[0] = 0
-x[1] = 0
-x[2] = 0
-x[3] = initialVelocity*np.cos(initialAngle)
-x[4] = initialVelocity*np.sin(initialAngle)
+        fcn[0] = Ux = x[2]
+        fcn[1] = Uy = x[3]
+        # fcn[2] = 0.0#np.tanh(8/ ( density * (Ux**2 + Uy**2) * diameter**2 * np.pi))
+        fcn[2] = -Cd*Ux/bulletMass
+        fcn[3] = -g - Cd*Uy/bulletMass
+        
+        return fcn
+    # Array for start and ending times
+    t = np.array([0, 60])
+    x = np.array([0]*4)
+    x[0] = 0
+    x[1] = 0
+    # x[2] = 0
+    x[2] = initialVelocity*np.cos(initialAngle)
+    x[3] = initialVelocity*np.sin(initialAngle)
 
 
-# Feed ode45py almost exactly like you would in MATLAB
-X, Y = ode45py(fcn, t, x, tol=1.0e-16, iter_lim=2000000)
-dataFile = get_filename('varDragData','.csv','./log_files/')
-heading = ['time(s)', 'x_pos', 'y_pos', 'Cd', 'x_vel', 'y_vel']
-with open(dataFile, 'a', newline='\n') as myFile:
-    writer = csv.writer(myFile)
-    writer.writerow(heading)
-    for key, val in enumerate(X):
-        dataOut = []
-        dataOut.append(val)
-        for i in Y[key]:
-            dataOut.append(i)
-        writer.writerow(dataOut)
-# np.savetxt(dataFile, (X[:], Y[:,0], Y[:,1], Y[:,2], Y[:,3], Y[:,4]), delimiter=',', header=heading, newline='\n')
+    # Feed ode45py almost exactly like you would in MATLAB
+    X, Y = ode45py(fcn, t, x, tol=1.0e-16, iter_lim=2000000)
+    # dataFile = get_filename('varDragData','.csv','./log_files/')
+    # # heading = ['time(s)', 'x_pos', 'y_pos', 'Cd', 'x_vel', 'y_vel']
+    # heading = ['time(s)', 'x_pos', 'y_pos', 'x_vel', 'y_vel']
+    # with open(dataFile, 'a', newline='\n') as myFile:
+    #     writer = csv.writer(myFile)
+    #     writer.writerow(heading)
+    #     for key, val in enumerate(X):
+    #         dataOut = []
+    #         dataOut.append(val)
+    #         for i in Y[key]:
+    #             dataOut.append(i)
+    #         writer.writerow(dataOut)
 
-plotFile1 = get_filename('varDrag_trajectory','.png','./log_files/')
+    # plotFile1 = get_filename('varDrag_trajectory','.png','./log_files/')
 
-# plt.plot(X, Y[:,0], label='X Position')
-# plt.plot(X, Y[:,1], label='Y Position')
-plt.plot(X, Y[:,2], label='Drag Coefficient')
-# plt.plot(X, Y[:,3], label='X Velocity')
-# plt.plot(X, Y[:,4], label='Y Velocity')
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
-plt.title('ODE Solver Output')
-plt.legend()
-# plt.savefig(plotFile1, bbox_inches='tight')
-plt.show()
+    # # plt.plot(X, Y[:,0], label='X Position')
+    # # plt.plot(X, Y[:,1], label='Y Position')
+    # # plt.plot(X, Y[:,2], label='Drag Coefficient')
+    # # plt.plot(X, Y[:,2], label='X Velocity')
+    # # plt.plot(X, Y[:,3], label='Y Velocity')
+    # plt.xlabel('X-axis')
+    # plt.ylabel('Y-axis')
+    # plt.title('ODE Solver Output')
+    # plt.legend()
+    # # plt.savefig(plotFile1, bbox_inches='tight')
+    # plt.show()
 
-plotFile2 = get_filename('varDrag_velTime','.png','./log_files/')
+    plotFile2 = get_filename('prelim_vel','.png','./log_files/')
 
-vel = np.sqrt(Y[:,3]**2 + Y[:,4]**2)
-# for k, v in enumerate(vel):
-#     if v < 343:
-#         soundIndex = k
-#         soundValue = v
-#         break
-plt.plot(X, vel)
-# plt.scatter(X[soundIndex], soundValue, label='Speed of Sound' ,color='r')
-# plt.annotate('({:1.2f} s)'.format(X[soundIndex]), (X[soundIndex] + 2 , soundValue))
-plt.xlabel('Time (s)')
-plt.ylabel('Velocity (m/s)')
-plt.title('Velocity Data')
-plt.legend()
-# plt.savefig(plotFile2, bbox_inches='tight')
-plt.show()
+    vel = np.sqrt(Y[:,2]**2 + Y[:,3]**2)
+    for k, v in enumerate(vel):
+        if v < 343:
+            soundIndex = k
+            soundValue = v
+            break
+    plt.plot(X, vel)
+    plt.scatter(X[soundIndex], soundValue, label='Speed of Sound' ,color='r')
+    plt.annotate('({:1.2f} s)'.format(X[soundIndex]), (X[soundIndex] + 2 , soundValue))
+    plt.xlabel('Time (s)')
+    plt.ylabel('Velocity (m/s)')
+    plt.title('Velocity Data')
+    plt.legend()
+    plt.savefig(plotFile2, bbox_inches='tight')
+    plt.show()
 
-plotFile3 = get_filename('varDrag_Trajectory_withSound','.png','./log_files/')
-plt.plot(Y[:,0],Y[:,1])
-# plt.scatter(Y[soundIndex,0], Y[soundIndex,1], label='Sound Barrier' ,color='r')
-# plt.annotate('({:1.0f}, {:1.0f})'.format(Y[soundIndex,0], Y[soundIndex,1]), (Y[soundIndex,0]-400, Y[soundIndex,1]+0), ha='right')
-plt.xlabel('Displacement X (m)')
-plt.ylabel('Displacement Y (m)')
-plt.title('Trajectory Data')
-plt.legend()
-# plt.savefig(plotFile3, bbox_inches='tight')
-plt.show()
-# bulletSim()
+    plotFile3 = get_filename('prelim_traj','.png','./log_files/')
+    plt.plot(Y[:,0],Y[:,1])
+    plt.scatter(Y[soundIndex,0], Y[soundIndex,1], label='Sound Barrier' ,color='r')
+    plt.annotate('({:1.0f}, {:1.0f})'.format(Y[soundIndex,0], Y[soundIndex,1]), (Y[soundIndex,0]-400, Y[soundIndex,1]+0), ha='right')
+    plt.xlabel('Displacement X (m)')
+    plt.ylabel('Displacement Y (m)')
+    plt.title('Trajectory Data')
+    plt.legend()
+    plt.savefig(plotFile3, bbox_inches='tight')
+    plt.show()
+bulletSim()
